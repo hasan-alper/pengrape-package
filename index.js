@@ -99,6 +99,53 @@ const random = {
 		else if (format === "hsl") return hsl;
 		else if (format === "all") return all;
 	},
+	password: (opts) => {
+		//Define default values for options.
+		const lowercaseDefault = true;
+		const uppercaseDefault = true;
+		const numberDefault = true;
+		const symbolDefault = false;
+		const lengthDefault = 20;
+
+		//Add selected default values.
+		let { lowercase = lowercaseDefault, uppercase = uppercaseDefault, number = numberDefault, symbol = symbolDefault, length = lengthDefault } = opts || {
+			lowercase: lowercaseDefault,
+			uppercase: uppercaseDefault,
+			number: numberDefault,
+			symbol: symbolDefault,
+			length: lengthDefault,
+		};
+
+		//Check the values to make sure they do not break the code.
+		if (typeof lowercase !== "boolean") return "Invalid lowercase value. Lowercase value must be true or false";
+		else if (typeof uppercase !== "boolean") return "Invalid uppercase value. Uppercase value must be true or false.";
+		else if (typeof number !== "boolean") return "Invalid number value. Number value must be true or false.";
+		else if (typeof symbol !== "boolean") return "Invalid symbol value. Symbol value must be true or false.";
+		else if (!Number.isInteger(length)) return "Invalid length value. Length value must be an integer.";
+		else if (length <= 0) return "Invalid length value. Length value must be greater than 0.";
+		else if (!lowercase && !uppercase && !number && !symbol) return "Invalid character set. At least one character set must be selected.";
+
+		//Define characters
+		const lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
+		const uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		const numbers = "0123456789";
+		const symbols = "~!@#$%&*-+=?/";
+
+		// Combine characters according to included characters.
+		let allCharacters = "";
+		if (lowercase) allCharacters += lowercaseLetters;
+		if (uppercase) allCharacters += uppercaseLetters;
+		if (number) allCharacters += numbers;
+		if (symbol) allCharacters += symbols;
+		if (!allCharacters) return "You must select at least one character set";
+
+		//Return a password based on the options.
+		let password = "";
+		for (let i = 0; i < length; i++) {
+			password += allCharacters[random.number({ min: 0, max: allCharacters.length - 1 })];
+		}
+		return password;
+	},
 };
 
 module.exports = random;
