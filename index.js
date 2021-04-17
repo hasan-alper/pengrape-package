@@ -137,7 +137,6 @@ const random = {
 		if (uppercase) allCharacters += uppercaseLetters;
 		if (number) allCharacters += numbers;
 		if (symbol) allCharacters += symbols;
-		if (!allCharacters) return "You must select at least one character set";
 
 		//Return a password based on the options.
 		let password = "";
@@ -145,6 +144,41 @@ const random = {
 			password += allCharacters[random.number({ min: 0, max: allCharacters.length - 1 })];
 		}
 		return password;
+	},
+	spinner: (opts) => {
+		//Define default values for options.
+		const entriesDefault = ["Cherry", "Apple", "Grape"];
+		const returnAllEntriesDefault = false;
+
+		//Add selected default values.
+		let { entries = entriesDefault, returnAllEntries = returnAllEntriesDefault } = opts || { entries: entriesDefault, returnAllEntries: returnAllEntriesDefault };
+
+		//Check the values to make sure they do not break the code.
+		if (!Array.isArray(entries)) return "Invalid entries value. Entries value must be an array.";
+		else if (!entries[0]) return "Invalid entries value. Entries value must contain at least one entry.";
+		else if (typeof returnAllEntries !== "boolean") return "Invalid returnAllEntries value. returnAllEntries value must be true or false";
+
+		//Generate a degree.
+		const deg = random.number({ min: 0, max: 359 });
+
+		//Create entry objects and return a winner.
+		let winner;
+		let allEntries = [];
+		entries.forEach((entry, i) => {
+			const max = Math.floor((360 / entries.length) * (i + 1));
+			const min = Math.floor(max - 360 / entries.length);
+			const data = max - min;
+			let isWinner = false;
+			const obj = { entry, min, max, deg, data, isWinner };
+			if (obj.min < deg && max > deg) {
+				winner = obj;
+				obj.isWinner = true;
+			}
+			allEntries.push(obj);
+		});
+
+		if (returnAllEntries === false) return winner;
+		else if (returnAllEntries === true) return allEntries;
 	},
 };
 

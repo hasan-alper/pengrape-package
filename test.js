@@ -9,5 +9,8 @@ color = random.color({ format: "all" });
 //Random Password
 password = random.password({ lowercase: true, uppercase: false, number: true, symbol: true, length: 12 });
 
+//Spinner
+spinner = random.spinner({ entries: ["pizza", "lasagna", "salad", "quesadilla"], returnAllEntries: true });
+
 //Print
-console.log(password);
+console.log(spinner);
