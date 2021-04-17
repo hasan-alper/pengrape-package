@@ -1,5 +1,10 @@
 const random = require("./index");
 
-//RANDOM NUMBER
+//Random Number
 number = random.number({ min: 10, max: 12, type: "decimal", precision: 6 });
-console.log(number);
+
+//Random Color
+color = random.color({ format: "all" });
+
+//Print
+console.log(color);
