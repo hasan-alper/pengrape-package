@@ -177,8 +177,37 @@ const random = {
 			allEntries.push(obj);
 		});
 
-		if (returnAllEntries === false) return winner;
-		else if (returnAllEntries === true) return allEntries;
+		if (!returnAllEntries) return winner;
+		else if (returnAllEntries) return allEntries;
+	},
+	dice: (opts) => {
+		//Define default values for options.
+		const amountsDefault = 1;
+		const sidesDefault = 4;
+
+		//Add selected default values.
+		let { notation = `${amountsDefault}d${sidesDefault}` } = opts || { notation: `${amountsDefault}d${sidesDefault}` };
+		const splits = notation.split("d");
+		const amounts = parseInt(splits[0] || amountsDefault);
+		const sides = parseInt(splits[1] || sidesDefault);
+
+		//Check the values to make sure they do not break the code.
+		if (!Number.isInteger(amounts) || !Number.isInteger(sides)) return 'Invalid notation value. Notation value should look like these: "2d10", "d6", "12d" , "8" or "d"';
+		else if (amounts <= 0) return "Invalid amounts value. Amounts value must be greater than 0.";
+		else if (sides <= 1) return "Invalid sides value. Sides value must be greater than 1.";
+
+		//Generate results based on options.
+		let total = 0;
+		let results = [];
+		let allData = {};
+		for (let i = 0; i < amounts; i++) {
+			const result = random.number({ min: 1, max: sides });
+			total += result;
+			results.push(result);
+		}
+		allData = { results, total };
+
+		return allData;
 	},
 };
 
