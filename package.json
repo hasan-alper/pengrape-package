@@ -1,8 +1,21 @@
 {
-  "name": "pengrape",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "author": "Hasan Alper Aydın",
-  "license": "ISC"
+	"name": "pengrape",
+	"version": "1.0.0",
+	"description": "A collection of utilities generating anything random.",
+	"main": "index.js",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/hasan-alper/pengrape-package.git"
+	},
+  "keywords": [
+    "random",
+    "number",
+    "color",
+    "password",
+    "spinner",
+    "dice",
+    "text"
+  ],
+	"author": "Hasan Alper Aydın",
+	"license": "MIT"
 }
