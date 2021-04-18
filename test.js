@@ -15,5 +15,8 @@ spinner = random.spinner({ entries: ["pizza", "lasagna", "salad", "quesadilla"],
 //Dice
 dice = random.dice({ notation: "20d100" });
 
+//Random Text
+text = random.text({ type: "word", length: 8 });
+
 //Print
-console.log(dice);
+console.log(text);

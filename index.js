@@ -209,6 +209,93 @@ const random = {
 
 		return allData;
 	},
+	text: (opts) => {
+		//Define default values for options.
+		const typeDefault = "sentence"; //["letter", "syllable", "word", "sentence", "paragraph"]
+		const maxLengthDefault = 12; //This value should be less than 60 to prevent max call stack size exceeding.
+
+		//Add selected default values.
+		let { type = typeDefault, length } = opts || { type: typeDefault };
+
+		//Check the values to make sure they do not break the code.
+		if (!["letter", "syllable", "word", "sentence", "paragraph"].includes(type)) return 'Invalid type value. Type value must be "letter", "syllable", "word", "sentence" or "paragraph".';
+		else if (!Number.isInteger(length) && length && type !== "letter" && type !== "syllable") return "Invalid length value. Length value must be an integer.";
+		else if (length <= 1 && type !== "letter" && type !== "syllable") return "Invalid length value. Length value must be greater than 1.";
+		else if (length > maxLengthDefault && type !== "letter" && type !== "syllable") return `Invalid length value. Length value must be smaller than or equal to ${maxLengthDefault}.`;
+
+		//Return a text based on the options.
+		if (type === "letter") return getLetter();
+		else if (type === "syllable") return getSyllable();
+		else if (type === "word") return getWord(length);
+		else if (type === "sentence") return getSentence(length);
+		else if (type === "paragraph") return getParagraph(length);
+
+		//Define functions.
+		function getLetter() {
+			return "abcdefghijklmnopqrstuvwxyz"[random.number({ min: 0, max: 25 })];
+		}
+
+		function getVowel() {
+			return "aeiou"[random.number({ min: 0, max: 4 })];
+		}
+
+		function getConsonant() {
+			return "bcdfghjklmnpqrstvwxyz"[random.number({ min: 0, max: 20 })];
+		}
+
+		function getSyllable() {
+			switch (random.number({ min: 0, max: 6 })) {
+				case 0:
+					return getConsonant() + getVowel();
+				case 1:
+					return getVowel() + getConsonant();
+				case 2:
+					return getConsonant() + getVowel() + getConsonant();
+				case 3:
+					return getVowel() + getConsonant() + getConsonant();
+				case 4:
+					return getVowel() + getConsonant() + getVowel();
+				case 5:
+					return getConsonant() + getVowel() + getVowel() + getConsonant();
+				case 6:
+					return getConsonant() + getVowel() + getConsonant() + getConsonant();
+			}
+		}
+
+		function getWord(length) {
+			!length ? (length = random.number({ min: 2, max: maxLengthDefault })) : (length = length);
+
+			let str = getSyllable();
+			for (let i = 0; i < random.number({ min: 0, max: Math.ceil(maxLengthDefault / 4) }); i++) {
+				str += getSyllable();
+			}
+
+			return length === str.length ? str : getWord(length);
+		}
+
+		function getSentence(length) {
+			!length ? (length = random.number({ min: 2, max: maxLengthDefault })) : (length = length);
+
+			let str = getWord();
+			for (let i = 0; i < length - 1; i++) {
+				str += " " + getWord();
+			}
+			str = str.charAt(0).toUpperCase() + str.slice(1);
+
+			return str + ".";
+		}
+
+		function getParagraph(length) {
+			!length ? (length = random.number({ min: 2, max: maxLengthDefault })) : (length = length);
+
+			let str = getSentence();
+			for (let i = 0; i < length - 1; i++) {
+				str += " " + getSentence();
+			}
+
+			return str;
+		}
+	},
 };
 
 module.exports = random;
