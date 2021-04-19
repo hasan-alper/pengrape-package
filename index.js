@@ -4,7 +4,7 @@ const random = {
 		const minDefault = 0;
 		const maxDefault = 20;
 		const typeDefault = "integer"; // ["integer", "decimal"]
-		const parityDefault = null; // [null, "odd", "even"]
+		const parityDefault = "none"; // ["none", "odd", "even"]
 		const precisionDefault = 4;
 
 		//Add selected default values.
@@ -21,14 +21,14 @@ const random = {
 		else if (!Number.isInteger(max)) return "Invalid max value. Max value must be an integer.";
 		else if (min >= max) return "Invalid min and max values. Min value must be smaller than max value.";
 		else if (!["integer", "decimal"].includes(type)) return 'Invalid type value. Type value must be "integer" or "decimal".';
-		else if (![null, "odd", "even"].includes(parity)) return 'Invalid parity value. Parity value must be null, "odd" or "even".';
+		else if (!["none", "odd", "even"].includes(parity)) return 'Invalid parity value. Parity value must be "none", "odd" or "even".';
 		else if (!Number.isInteger(precision)) return "Invalid precision value. Precision value must be an integer.";
 		else if (precision <= 0) return "Invalid precision value. Precision value must be greater than 0.";
 
 		//Return a number based on the options.
 		if (type === "integer") {
 			let num = Math.floor(Math.random() * (max - min + 1)) + min;
-			if (parity === null) return num;
+			if (parity === "none") return num;
 			else if (parity === "odd") return num % 2 === 0 ? random.number({ min, max, type, parity: "odd" }) : num;
 			else if (parity === "even") return num % 2 === 0 ? num : random.number({ min, max, type, parity: "even" });
 		} else if (type === "decimal") {
