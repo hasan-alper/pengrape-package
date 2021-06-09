@@ -76,7 +76,7 @@ const random = {
 			const l = values[2] || random.number({ min: 0, max: 100 });
 			return pretty.hsl([h, s, l]);
 		} else if (format === "all") {
-			if (values[0] === "rgb") {
+			if (values && values[0] === "rgb") {
 				const r = values[1] || random.number({ min: 0, max: 255 });
 				const g = values[2] || random.number({ min: 0, max: 255 });
 				const b = values[3] || random.number({ min: 0, max: 255 });
@@ -85,7 +85,7 @@ const random = {
 				const hsl = pretty.hsl(convert.rgbToHsl(rgb));
 				rgb = pretty.rgb(rgb);
 				return `${hex};${rgb};${hsl}`.split(";");
-			} else if (values[0] == "hex") {
+			} else if (values && values[0] === "hex") {
 				const r = values[1] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
 				const g = values[2] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
 				const b = values[3] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
@@ -94,7 +94,7 @@ const random = {
 				const hsl = pretty.hsl(convert.hexToHsl(hex));
 				hex = pretty.hex(hex);
 				return `${hex};${rgb};${hsl}`.split(";");
-			} else if (values[0] == "hsl") {
+			} else if (values && values[0] === "hsl") {
 				const h = values[1] || random.number({ min: 0, max: 359 });
 				const s = values[2] || random.number({ min: 0, max: 100 });
 				const l = values[3] || random.number({ min: 0, max: 100 });
@@ -102,6 +102,15 @@ const random = {
 				const rgb = pretty.rgb(convert.hslToRgb(hsl));
 				const hex = pretty.hex(convert.hslToHex(hsl));
 				hsl = pretty.hsl(hsl);
+				return `${hex};${rgb};${hsl}`.split(";");
+			} else {
+				const r = random.number({ min: 0, max: 255 });
+				const g = random.number({ min: 0, max: 255 });
+				const b = random.number({ min: 0, max: 255 });
+				let rgb = [r, g, b];
+				const hex = pretty.hex(convert.rgbToHex(rgb));
+				const hsl = pretty.hsl(convert.rgbToHsl(rgb));
+				rgb = pretty.rgb(rgb);
 				return `${hex};${rgb};${hsl}`.split(";");
 			}
 		}

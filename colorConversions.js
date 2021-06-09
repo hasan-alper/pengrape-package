@@ -1,8 +1,8 @@
 const convert = {
 	rgbToHex: (arr) => {
-		r = +arr[0];
-		g = +arr[1];
-		b = +arr[2];
+		let r = +arr[0];
+		let g = +arr[1];
+		let b = +arr[2];
 
 		r = r.toString(16);
 		g = g.toString(16);
@@ -15,9 +15,9 @@ const convert = {
 		return [r, g, b];
 	},
 	rgbToHsl: (arr) => {
-		r = arr[0];
-		g = arr[1];
-		b = arr[2];
+		let r = arr[0];
+		let g = arr[1];
+		let b = arr[2];
 
 		r /= 255;
 		g /= 255;
@@ -53,9 +53,9 @@ const convert = {
 		return convert.rgbToHsl(convert.hexToRgb(arr));
 	},
 	hslToRgb: (arr) => {
-		h = arr[0];
-		s = arr[1] / 100;
-		l = arr[2] / 100;
+		let h = arr[0];
+		let s = arr[1] / 100;
+		let l = arr[2] / 100;
 		let a = s * Math.min(l, 1 - l);
 		let f = (n, k = (n + h / 30) % 12) => l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
 		return [Math.round(f(0) * 255).toString(), Math.round(f(8) * 255).toString(), Math.round(f(4) * 255).toString()];
