@@ -9,7 +9,13 @@ const random = {
 		const precisionDefault = 4;
 
 		//Add selected default values.
-		let { min = minDefault, max = maxDefault, type = typeDefault, parity = parityDefault, precision = precisionDefault } = opts || {
+		let {
+			min = minDefault,
+			max = maxDefault,
+			type = typeDefault,
+			parity = parityDefault,
+			precision = precisionDefault,
+		} = opts || {
 			min: minDefault,
 			max: maxDefault,
 			type: typeDefault,
@@ -53,13 +59,13 @@ const random = {
 		if (!["hex", "rgb", "hsl", "all"].includes(format)) return 'Invalid format value. Format value must be "hex", "rgb", "hsl" or "all".';
 
 		// Generate codes based on the format value.
+		const charList = "0123456789abcdef";
 		if (format === "rgb") {
 			const r = values[0] || random.number({ min: 0, max: 255 });
 			const g = values[1] || random.number({ min: 0, max: 255 });
 			const b = values[2] || random.number({ min: 0, max: 255 });
 			return pretty.rgb([r, g, b]);
 		} else if (format === "hex") {
-			charList = "0123456789abcdef";
 			const r = values[0] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
 			const g = values[1] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
 			const b = values[2] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
@@ -80,7 +86,6 @@ const random = {
 				rgb = pretty.rgb(rgb);
 				return `${hex};${rgb};${hsl}`.split(";");
 			} else if (values[0] == "hex") {
-				charList = "0123456789abcdef";
 				const r = values[1] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
 				const g = values[2] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
 				const b = values[3] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
@@ -110,7 +115,13 @@ const random = {
 		const lengthDefault = 20;
 
 		//Add selected default values.
-		let { lowercase = lowercaseDefault, uppercase = uppercaseDefault, number = numberDefault, symbol = symbolDefault, length = lengthDefault } = opts || {
+		let {
+			lowercase = lowercaseDefault,
+			uppercase = uppercaseDefault,
+			number = numberDefault,
+			symbol = symbolDefault,
+			length = lengthDefault,
+		} = opts || {
 			lowercase: lowercaseDefault,
 			uppercase: uppercaseDefault,
 			number: numberDefault,
