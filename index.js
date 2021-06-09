@@ -1,3 +1,4 @@
+const { convert, pretty } = require("./colorConversions");
 const random = {
 	number: (opts) => {
 		//Define default values for options.
@@ -42,62 +43,63 @@ const random = {
 	color: (opts) => {
 		//Define default values for options.
 		const formatDefault = "hex"; // ["hex", "rgb", "hsl"]
+		const valuesDefault = [null, null, null, null];
 
 		//Add selected default values.
 		let { format = formatDefault } = opts || { format: formatDefault };
+		let { values = valuesDefault } = opts || { values: valuesDefault };
 
 		//Check the values to make sure they do not break the code.
 		if (!["hex", "rgb", "hsl", "all"].includes(format)) return 'Invalid format value. Format value must be "hex", "rgb", "hsl" or "all".';
 
-		//Generate red, green and blue values.
-		const r = random.number({ min: 0, max: 255 });
-		const g = random.number({ min: 0, max: 255 });
-		const b = random.number({ min: 0, max: 255 });
-
-		//Define convertion functions.
-		const rgbToHex = (r, g, b) => {
-			return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-		};
-
-		const rgbToHsl = (r, g, b) => {
-			r /= 255;
-			g /= 255;
-			b /= 255;
-
-			let cmin = Math.min(r, g, b),
-				cmax = Math.max(r, g, b),
-				delta = cmax - cmin,
-				h = 0,
-				s = 0,
-				l = 0;
-
-			if (delta == 0) h = 0;
-			else if (cmax == r) h = ((g - b) / delta) % 6;
-			else if (cmax == g) h = (b - r) / delta + 2;
-			else h = (r - g) / delta + 4;
-
-			h = Math.round(h * 60);
-
-			if (h < 0) h += 360;
-
-			l = (cmax + cmin) / 2;
-			s = delta == 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-			s = Math.round(+(s * 100).toFixed(1));
-			l = Math.round(+(l * 100).toFixed(1));
-
-			return "hsl(" + h + ", " + s + "%, " + l + "%)";
-		};
-
-		//Return a color based on the options.
-		const rgb = `rgb(${r}, ${g}, ${b})`;
-		const hex = rgbToHex(r, g, b);
-		const hsl = rgbToHsl(r, g, b);
-		const all = `${hex};${rgb};${hsl}`.split(";");
-
-		if (format === "hex") return hex;
-		else if (format === "rgb") return rgb;
-		else if (format === "hsl") return hsl;
-		else if (format === "all") return all;
+		// Generate codes based on the format value.
+		if (format === "rgb") {
+			const r = values[0] || random.number({ min: 0, max: 255 });
+			const g = values[1] || random.number({ min: 0, max: 255 });
+			const b = values[2] || random.number({ min: 0, max: 255 });
+			return pretty.rgb([r, g, b]);
+		} else if (format === "hex") {
+			charList = "0123456789abcdef";
+			const r = values[0] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+			const g = values[1] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+			const b = values[2] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+			return pretty.hex([r, g, b]);
+		} else if (format === "hsl") {
+			const h = values[0] || random.number({ min: 0, max: 359 });
+			const s = values[1] || random.number({ min: 0, max: 100 });
+			const l = values[2] || random.number({ min: 0, max: 100 });
+			return pretty.hsl([h, s, l]);
+		} else if (format === "all") {
+			if (values[0] === "rgb") {
+				const r = values[1] || random.number({ min: 0, max: 255 });
+				const g = values[2] || random.number({ min: 0, max: 255 });
+				const b = values[3] || random.number({ min: 0, max: 255 });
+				let rgb = [r, g, b];
+				const hex = pretty.hex(convert.rgbToHex(rgb));
+				const hsl = pretty.hsl(convert.rgbToHsl(rgb));
+				rgb = pretty.rgb(rgb);
+				return `${hex};${rgb};${hsl}`.split(";");
+			} else if (values[0] == "hex") {
+				charList = "0123456789abcdef";
+				const r = values[1] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+				const g = values[2] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+				const b = values[3] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+				let hex = [r, g, b];
+				const rgb = pretty.rgb(convert.hexToRgb(hex));
+				const hsl = pretty.hsl(convert.hexToHsl(hex));
+				hex = pretty.hex(hex);
+				return `${hex};${rgb};${hsl}`.split(";");
+			} else if (values[0] == "hsl") {
+				const h = values[1] || random.number({ min: 0, max: 359 });
+				const s = values[2] || random.number({ min: 0, max: 100 });
+				const l = values[3] || random.number({ min: 0, max: 100 });
+				let hsl = [h, s, l];
+				const rgb = pretty.rgb(convert.hslToRgb(hsl));
+				const hex = pretty.hex(convert.hslToHex(hsl));
+				hsl = pretty.hsl(hsl);
+				return `${hex};${rgb};${hsl}`.split(";");
+			}
+		}
 	},
 	password: (opts) => {
 		//Define default values for options.

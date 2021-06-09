@@ -4,7 +4,7 @@ const random = require("./index");
 number = random.number({ min: 10, max: 12, type: "decimal", precision: 6 });
 
 //Color
-color = random.color({ format: "all" });
+color = random.color({ format: "all", values: ["hex", 68, "22", null] });
 
 //Password
 password = random.password({ lowercase: true, uppercase: false, number: true, symbol: true, length: 12 });
@@ -19,4 +19,4 @@ dice = random.dice({ notation: "20d100" });
 text = random.text({ type: "word", length: 8 });
 
 //Print
-console.log(text);
+console.log(color);
