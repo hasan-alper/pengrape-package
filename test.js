@@ -4,7 +4,7 @@ const random = require("./index");
 number = random.number({ min: 10, max: 12, type: "decimal", precision: 6 });
 
 //Color
-color = random.color({ format: "all", values: ["hex", 68, "22", null] });
+color = random.color({ format: "all", values: ["rgb", 33, "234", null], syntax: "all" });
 
 //Password
 password = random.password({ lowercase: true, uppercase: false, number: true, symbol: true, length: 12 });

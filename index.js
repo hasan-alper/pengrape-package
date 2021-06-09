@@ -50,13 +50,16 @@ const random = {
 		//Define default values for options.
 		const formatDefault = "hex"; // ["hex", "rgb", "hsl"]
 		const valuesDefault = [null, null, null, null];
+		const syntaxDefault = "normal"; // ["normal", "list", "all"]
 
 		//Add selected default values.
 		let { format = formatDefault } = opts || { format: formatDefault };
 		let { values = valuesDefault } = opts || { values: valuesDefault };
+		let { syntax = syntaxDefault } = opts || { syntax: syntaxDefault };
 
 		//Check the values to make sure they do not break the code.
 		if (!["hex", "rgb", "hsl", "all"].includes(format)) return 'Invalid format value. Format value must be "hex", "rgb", "hsl" or "all".';
+		if (!["normal", "list", "all"].includes(syntax)) return 'Invalid syntax value. Syntax value must be "normal", "list" or "all".';
 
 		// Generate codes based on the format value.
 		const charList = "0123456789abcdef";
@@ -64,54 +67,76 @@ const random = {
 			const r = values[0] || random.number({ min: 0, max: 255 });
 			const g = values[1] || random.number({ min: 0, max: 255 });
 			const b = values[2] || random.number({ min: 0, max: 255 });
-			return pretty.rgb([r, g, b]);
+			if (syntax === "normal") return pretty.rgb([r, g, b]);
+			else if (syntax === "list") return [r, g, b];
+			else if (syntax === "all") return { normal: pretty.rgb([r, g, b]), list: [r, g, b] };
 		} else if (format === "hex") {
 			const r = values[0] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
 			const g = values[1] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
 			const b = values[2] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
-			return pretty.hex([r, g, b]);
+			if (syntax === "normal") return pretty.hex([r, g, b]);
+			else if (syntax === "list") return [r, g, b];
+			else if (syntax === "all") return { normal: pretty.hex([r, g, b]), list: [r, g, b] };
 		} else if (format === "hsl") {
 			const h = values[0] || random.number({ min: 0, max: 359 });
 			const s = values[1] || random.number({ min: 0, max: 100 });
 			const l = values[2] || random.number({ min: 0, max: 100 });
-			return pretty.hsl([h, s, l]);
+			if (syntax === "normal") return pretty.hsl([h, s, l]);
+			else if (syntax === "list") return [h, s, l];
+			else if (syntax === "all") return { normal: pretty.hsl([h, s, l]), list: [h, s, l] };
 		} else if (format === "all") {
 			if (values && values[0] === "rgb") {
 				const r = values[1] || random.number({ min: 0, max: 255 });
 				const g = values[2] || random.number({ min: 0, max: 255 });
 				const b = values[3] || random.number({ min: 0, max: 255 });
-				let rgb = [r, g, b];
-				const hex = pretty.hex(convert.rgbToHex(rgb));
-				const hsl = pretty.hsl(convert.rgbToHsl(rgb));
-				rgb = pretty.rgb(rgb);
-				return `${hex};${rgb};${hsl}`.split(";");
+				const rgb = [r, g, b];
+				const hex = convert.rgbToHex(rgb);
+				const hsl = convert.rgbToHsl(rgb);
+				const prgb = pretty.rgb(rgb);
+				const phex = pretty.hex(hex);
+				const phsl = pretty.hsl(hsl);
+				if (syntax === "normal") return [phex, prgb, phsl];
+				else if (syntax === "list") return [hex, rgb, hsl];
+				else if (syntax === "all") return { normal: [phex, prgb, phsl], list: [hex, rgb, hsl] };
 			} else if (values && values[0] === "hex") {
 				const r = values[1] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
 				const g = values[2] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
 				const b = values[3] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
-				let hex = [r, g, b];
-				const rgb = pretty.rgb(convert.hexToRgb(hex));
-				const hsl = pretty.hsl(convert.hexToHsl(hex));
-				hex = pretty.hex(hex);
-				return `${hex};${rgb};${hsl}`.split(";");
+				const hex = [r, g, b];
+				const rgb = convert.hexToRgb(hex);
+				const hsl = convert.hexToHsl(hex);
+				const phex = pretty.hex(hex);
+				const prgb = pretty.rgb(rgb);
+				const phsl = pretty.hsl(hsl);
+				if (syntax === "normal") return [phex, prgb, phsl];
+				else if (syntax === "list") return [hex, rgb, hsl];
+				else if (syntax === "all") return { normal: [phex, prgb, phsl], list: [hex, rgb, hsl] };
 			} else if (values && values[0] === "hsl") {
 				const h = values[1] || random.number({ min: 0, max: 359 });
 				const s = values[2] || random.number({ min: 0, max: 100 });
 				const l = values[3] || random.number({ min: 0, max: 100 });
-				let hsl = [h, s, l];
-				const rgb = pretty.rgb(convert.hslToRgb(hsl));
-				const hex = pretty.hex(convert.hslToHex(hsl));
-				hsl = pretty.hsl(hsl);
-				return `${hex};${rgb};${hsl}`.split(";");
+				const hsl = [h, s, l];
+				const rgb = convert.hslToRgb(hsl);
+				const hex = convert.hslToHex(hsl);
+				const phsl = pretty.hsl(hsl);
+				const prgb = pretty.rgb(rgb);
+				const phex = pretty.hex(hex);
+				if (syntax === "normal") return [phex, prgb, phsl];
+				else if (syntax === "list") return [hex, rgb, hsl];
+				else if (syntax === "all") return { normal: [phex, prgb, phsl], list: [hex, rgb, hsl] };
 			} else {
 				const r = random.number({ min: 0, max: 255 });
 				const g = random.number({ min: 0, max: 255 });
 				const b = random.number({ min: 0, max: 255 });
-				let rgb = [r, g, b];
-				const hex = pretty.hex(convert.rgbToHex(rgb));
-				const hsl = pretty.hsl(convert.rgbToHsl(rgb));
-				rgb = pretty.rgb(rgb);
-				return `${hex};${rgb};${hsl}`.split(";");
+				const rgb = [r, g, b];
+				const hex = convert.rgbToHex(rgb);
+				const hsl = convert.rgbToHsl(rgb);
+				const prgb = pretty.rgb(rgb);
+				const phex = pretty.hex(hex);
+				const phsl = pretty.hsl(hsl);
+				if (syntax === "normal") return [phex, prgb, phsl];
+				else if (syntax === "list") return [hex, rgb, hsl];
+				else if (syntax === "all") return { normal: [phex, prgb, phsl], list: [hex, rgb, hsl] };
 			}
 		}
 	},
