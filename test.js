@@ -10,8 +10,7 @@ color = random.color({ format: "all", values: ["rgb", 33, "234", null], syntax: 
 password = random.password({ lowercase: true, uppercase: false, number: true, symbol: true, length: 12 });
 
 //Spinner
-// spinner = random.spinner({ entries: ["pizza", "lasagna", "salad", "quesadilla"], returnAllEntries: true });
-spinner = random.spinner();
+spinner = random.spinner({ entries: ["pizza", "lasagna", "salad", "quesadilla"], returnDetails: false, returnEntries: false });
 
 //Dice
 dice = random.dice({ notation: "20d100" });

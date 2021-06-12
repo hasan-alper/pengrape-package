@@ -194,23 +194,27 @@ const random = {
 	},
 	spinner: (opts) => {
 		//Define default values for options.
-		const returnAllEntriesDefault = false;
+		const returnDetailsDefault = false;
+		const returnEntriesDefault = false;
 
 		//Add selected default values.
-		let { entries, returnAllEntries = returnAllEntriesDefault } = opts || { returnAllEntries: returnAllEntriesDefault };
+		let { entries, returnDetails = returnDetailsDefault, returnEntries = returnEntriesDefault } = opts || { returnDetails: returnDetailsDefault, returnEntries: returnEntriesDefault };
 
 		//Check the values to make sure they do not break the code.
 		if (!entries) return "Invalid entries value. Entries value must contain at least one entry.";
 		if (!Array.isArray(entries)) return "Invalid entries value. Entries value must be an array.";
 		else if (!entries[0]) return "Invalid entries value. Entries value must contain at least one entry.";
-		else if (typeof returnAllEntries !== "boolean") return "Invalid returnAllEntries value. returnAllEntries value must be true or false";
+		else if (typeof returnDetails !== "boolean") return "Invalid returnDetails value. returnDetails value must be true or false.";
+		else if (typeof returnEntries !== "boolean") return "Invalid returnEntries value. returnEntries value must be true or false.";
 
 		//Generate a degree.
 		const deg = random.number({ min: 0, max: 359 });
 
 		//Create entry objects and return a winner.
 		let winner;
+		let detailedWinner;
 		let allEntries = [];
+		let allDetailedEntries = [];
 		entries.forEach((entry, i) => {
 			const max = Math.floor((360 / entries.length) * (i + 1));
 			const min = Math.floor(max - 360 / entries.length);
@@ -218,14 +222,19 @@ const random = {
 			let isWinner = false;
 			const obj = { entry, min, max, deg, data, isWinner };
 			if (obj.min < deg && max > deg) {
-				winner = obj;
+				winner = entry;
+				detailedWinner = obj;
 				obj.isWinner = true;
 			}
-			allEntries.push(obj);
+			allEntries = entries;
+			allDetailedEntries.push(obj);
 		});
 
-		if (!returnAllEntries) return winner;
-		else if (returnAllEntries) return allEntries;
+		[winner, detailedWinner, allEntries, allDetailedEntries];
+		if (!returnEntries && !returnDetails) return winner;
+		else if (!returnEntries && returnDetails) return detailedWinner;
+		else if (returnEntries && !returnDetails) return allEntries;
+		else if (returnEntries && returnDetails) return allDetailedEntries;
 	},
 	dice: (opts) => {
 		//Define default values for options.
