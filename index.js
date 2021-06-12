@@ -194,13 +194,13 @@ const random = {
 	},
 	spinner: (opts) => {
 		//Define default values for options.
-		const entriesDefault = ["Cherry", "Apple", "Grape"];
 		const returnAllEntriesDefault = false;
 
 		//Add selected default values.
-		let { entries = entriesDefault, returnAllEntries = returnAllEntriesDefault } = opts || { entries: entriesDefault, returnAllEntries: returnAllEntriesDefault };
+		let { entries, returnAllEntries = returnAllEntriesDefault } = opts || { returnAllEntries: returnAllEntriesDefault };
 
 		//Check the values to make sure they do not break the code.
+		if (!entries) return "Invalid entries value. Entries value must contain at least one entry.";
 		if (!Array.isArray(entries)) return "Invalid entries value. Entries value must be an array.";
 		else if (!entries[0]) return "Invalid entries value. Entries value must contain at least one entry.";
 		else if (typeof returnAllEntries !== "boolean") return "Invalid returnAllEntries value. returnAllEntries value must be true or false";
