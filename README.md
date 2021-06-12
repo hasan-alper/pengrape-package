@@ -24,22 +24,22 @@ console.log(number); // 12
 ### Color
 
 ```javascript
-const color = random.color({ format: "HEX" });
-console.log(color); // #f28e51
+const color = random.color({ format: "hex" });
+console.log(color); // "#f28e51"
 ```
 
 ### Password
 
 ```javascript
 const password = random.password({ symbol: false });
-console.log(password); // W7q0Va5RY53L63o7U0it
+console.log(password); // "W7q0Va5RY53L63o7U0it"
 ```
 
 ### Spinner
 
 ```javascript
 const spinner = random.spinner({ entries: ["Pizza", "Lasagna", "Quesadilla"] });
-console.log(spinner); // { entry: 'Lasagna', min: 120, max: 240, deg: 204, data: 120, isWinner: true }
+console.log(spinner); // "Lasagna"
 ```
 
 ### Dice
@@ -53,10 +53,10 @@ console.log(dice); // { results: [ 4, 9 ], total: 13 }
 
 ```javascript
 const text = random.text({ type: "word" });
-console.log(text); // inwitada
+console.log(text); // "inwitada"
 ```
 
-### See the [full docs](https://pengrape.herokuapp.com/docs) for details and examples.
+See the [full docs](https://pengrape.herokuapp.com/docs) for details and examples.
 
 ## Issues
 
