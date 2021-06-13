@@ -7,7 +7,7 @@ number = random.number({ min: 10, max: 12, type: "decimal", precision: 6 });
 color = random.color({ format: "all", values: ["rgb", 33, "234", null], syntax: "all" });
 
 //Password
-password = random.password({});
+password = random.password({ symbolPool: "&%?", length: 20, lowercase: false, uppercase: false, number: false, symbol: true });
 
 //Spinner
 spinner = random.spinner({ entries: ["pizza", "lasagna", "salad", "quesadilla"], returnDetails: false, returnEntries: false });

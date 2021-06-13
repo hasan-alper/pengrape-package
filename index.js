@@ -148,6 +148,7 @@ const random = {
 		const symbolDefault = false;
 		const minLengthDefault = 16;
 		const maxLengthDefault = 24;
+		const symbolPoolDefault = "~!@#$%&*-+=?/";
 
 		//Add selected default values.
 		let {
@@ -158,6 +159,7 @@ const random = {
 			minLength = minLengthDefault,
 			maxLength = maxLengthDefault,
 			length = random.number({ min: minLength, max: maxLength }),
+			symbolPool = symbolPoolDefault,
 		} = opts || {
 			lowercase: lowercaseDefault,
 			uppercase: uppercaseDefault,
@@ -166,6 +168,7 @@ const random = {
 			minLength: minLengthDefault,
 			maxLength: maxLengthDefault,
 			length: random.number({ min: minLengthDefault, max: maxLengthDefault }),
+			symbolPool: symbolPoolDefault,
 		};
 
 		//Check the values to make sure they do not break the code.
@@ -173,6 +176,8 @@ const random = {
 		else if (typeof uppercase !== "boolean") return "Invalid uppercase value. Uppercase value must be true or false.";
 		else if (typeof number !== "boolean") return "Invalid number value. Number value must be true or false.";
 		else if (typeof symbol !== "boolean") return "Invalid symbol value. Symbol value must be true or false.";
+		else if (typeof symbolPool !== "string") return "Invalid symbolPool value. SymbolPool value must a string.";
+		else if (symbolPool.length < 1) return "Invalid symbolPool value. SymbolPool value must containg at least one character.";
 		else if (!Number.isInteger(minLength)) return "Invalid minLength value. MinLength value must be an integer.";
 		else if (!Number.isInteger(maxLength)) return "Invalid maxLength value. MaxLength value must be an integer.";
 		else if (minLength >= maxLength) return "Invalid minLength and maxLength values. MinLength value must be smaller than maxLength value.";
@@ -184,19 +189,23 @@ const random = {
 		const lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
 		const uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		const numbers = "0123456789";
-		const symbols = "~!@#$%&*-+=?/";
 
 		// Combine characters according to included characters.
 		let allCharacters = "";
 		if (lowercase) allCharacters += lowercaseLetters;
 		if (uppercase) allCharacters += uppercaseLetters;
 		if (number) allCharacters += numbers;
-		if (symbol) allCharacters += symbols;
+		if (symbol) allCharacters += symbolPool;
 
 		//Return a password based on the options.
 		let password = "";
+
 		for (let i = 0; i < length; i++) {
-			password += allCharacters[random.number({ min: 0, max: allCharacters.length - 1 })];
+			let charIndex;
+			if (allCharacters.length === 1) charIndex = 0;
+			else charIndex = random.number({ min: 0, max: allCharacters.length - 1 });
+
+			password += allCharacters[charIndex];
 		}
 		return password;
 	},
