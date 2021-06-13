@@ -148,7 +148,8 @@ const random = {
 		const symbolDefault = false;
 		const minLengthDefault = 16;
 		const maxLengthDefault = 24;
-		const symbolPoolDefault = "~!@#$%&*-+=?/";
+		const symbolPoolDefault = "~!@#$%&*-+=?";
+		const excludeSimilarDefault = false;
 
 		//Add selected default values.
 		let {
@@ -160,6 +161,7 @@ const random = {
 			maxLength = maxLengthDefault,
 			length = random.number({ min: minLength, max: maxLength }),
 			symbolPool = symbolPoolDefault,
+			excludeSimilar = excludeSimilarDefault,
 		} = opts || {
 			lowercase: lowercaseDefault,
 			uppercase: uppercaseDefault,
@@ -168,7 +170,7 @@ const random = {
 			minLength: minLengthDefault,
 			maxLength: maxLengthDefault,
 			length: random.number({ min: minLengthDefault, max: maxLengthDefault }),
-			symbolPool: symbolPoolDefault,
+			excludeSimilar: excludeSimilarDefault,
 		};
 
 		//Check the values to make sure they do not break the code.
@@ -177,6 +179,7 @@ const random = {
 		else if (typeof number !== "boolean") return "Invalid number value. Number value must be true or false.";
 		else if (typeof symbol !== "boolean") return "Invalid symbol value. Symbol value must be true or false.";
 		else if (typeof symbolPool !== "string") return "Invalid symbolPool value. SymbolPool value must a string.";
+		else if (typeof excludeSimilar !== "boolean") return "Invalid excludeSimilar value. ExcludeSimilar value must be true or false.";
 		else if (symbolPool.length < 1) return "Invalid symbolPool value. SymbolPool value must containg at least one character.";
 		else if (!Number.isInteger(minLength)) return "Invalid minLength value. MinLength value must be an integer.";
 		else if (!Number.isInteger(maxLength)) return "Invalid maxLength value. MaxLength value must be an integer.";
@@ -186,9 +189,14 @@ const random = {
 		else if (!lowercase && !uppercase && !number && !symbol) return "Invalid character set. At least one character set must be selected.";
 
 		//Define characters
-		const lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
-		const uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-		const numbers = "0123456789";
+		let lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
+		let uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+		let numbers = "0123456789";
+		if (excludeSimilar) {
+			lowercaseLetters = "abcdefghjkmnpqrstuvwxyz";
+			uppercaseLetters = "ABCDEFGHJKMNPRSTUVWXYZ";
+			numbers = "23456789";
+		}
 
 		// Combine characters according to included characters.
 		let allCharacters = "";
