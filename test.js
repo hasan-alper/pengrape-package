@@ -18,5 +18,8 @@ dice = random.dice({ notation: "20d100" });
 //Random Text
 text = random.text({ type: "word", length: 8 });
 
+//Random Date
+date = random.date({ dateStart: [2021, 6, 17], dateEnd: [2021, 6, 18] });
+
 //Print
-console.log(password);
+console.log(date);

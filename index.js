@@ -377,6 +377,36 @@ const random = {
 			return str;
 		}
 	},
+	date: (opts) => {
+		//Define default values for options.
+		const dateStartDefault = [2021, 1, 1];
+		const dateEndDefault = [2022, 1, 1];
+
+		//Add selected default values.
+		let { dateStart = dateStartDefault, dateEnd = dateEndDefault } = opts || {
+			dateStart: dateStartDefault,
+			dataEnd: dateEndDefault,
+		};
+
+		//Check the values to make sure they do not break the code.
+		if (dateStart[0] < 1000 || dateEnd[0] < 1000) return "Invalid year. Year value must be greater than or equal to 1000.";
+		else if (dateStart[0] > 3000 || dateEnd[0] > 3000) return "Invalid year. Year value must be smaller than or equal to 3000.";
+		else if (new Date(...dateStart).getTime() > new Date(...dateEnd).getTime()) return "Invalid date values. The start date must come before the end date.";
+
+		//Generate a date based on the options.
+		dateStart[1]--;
+		dateStart[2];
+		dateEnd[1]--;
+		dateEnd[2]++;
+		result = new Date(new Date(...dateStart).getTime() + Math.random() * (new Date(...dateEnd).getTime() - new Date(...dateStart).getTime()));
+
+		//Return a date
+		const year = result.getFullYear();
+		const month = result.getMonth() + 1;
+		const date = result.getDate();
+
+		return `${year}-${month}-${date}`;
+	},
 };
 
 module.exports = random;
