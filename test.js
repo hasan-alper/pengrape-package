@@ -19,7 +19,7 @@ dice = random.dice({ notation: "20d100" });
 text = random.text({ type: "word", length: 8 });
 
 //Random Date
-date = random.date({ dateStart: [2021, 6, 17], dateEnd: [2021, 6, 18] });
+date = random.date({ dateStart: [2021, 6, 17], dateEnd: [2021, 6, 17], format: "dddd, dd mmm yyyy" });
 
 //Print
 console.log(date);

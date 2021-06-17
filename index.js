@@ -381,17 +381,24 @@ const random = {
 		//Define default values for options.
 		const dateStartDefault = [2021, 1, 1];
 		const dateEndDefault = [2022, 1, 1];
+		const formatDefault = "yyyy-mm-dd";
 
 		//Add selected default values.
-		let { dateStart = dateStartDefault, dateEnd = dateEndDefault } = opts || {
+		let {
+			dateStart = dateStartDefault,
+			dateEnd = dateEndDefault,
+			format = formatDefault,
+		} = opts || {
 			dateStart: dateStartDefault,
 			dataEnd: dateEndDefault,
+			format: formatDefault,
 		};
 
 		//Check the values to make sure they do not break the code.
 		if (dateStart[0] < 1000 || dateEnd[0] < 1000) return "Invalid year. Year value must be greater than or equal to 1000.";
 		else if (dateStart[0] > 3000 || dateEnd[0] > 3000) return "Invalid year. Year value must be smaller than or equal to 3000.";
 		else if (new Date(...dateStart).getTime() > new Date(...dateEnd).getTime()) return "Invalid date values. The start date must come before the end date.";
+		else if (typeof format !== "string") return "Invalid format value. Format value must a string.";
 
 		//Generate a date based on the options.
 		dateStart[1]--;
@@ -400,12 +407,45 @@ const random = {
 		dateEnd[2]++;
 		result = new Date(new Date(...dateStart).getTime() + Math.random() * (new Date(...dateEnd).getTime() - new Date(...dateStart).getTime()));
 
-		//Return a date
-		const year = result.getFullYear();
-		const month = result.getMonth() + 1;
-		const date = result.getDate();
+		//Define flags
+		const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+		const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+		const flags = {
+			yy: result.getFullYear().toString().slice(-2),
+			yyyy: result.getFullYear().toString(),
+			m: (result.getMonth() + 1).toString(),
+			mm: pad(result.getMonth() + 1),
+			mmm: months[result.getMonth()].slice(0, 3),
+			mmmm: months[result.getMonth()],
+			d: result.getDate().toString(),
+			dd: pad(result.getDate()),
+			ddd: days[result.getDay()].slice(0, 3),
+			dddd: days[result.getDay()],
+		};
 
-		return `${year}-${month}-${date}`;
+		//Return a date based on format
+		return formatDate(format);
+
+		//Define funtions
+		function pad(x) {
+			if (x < 10) x = "0" + x;
+			else x = x.toString();
+			return x;
+		}
+
+		function formatDate(format) {
+			if (format.includes("yyyy")) format = format.replace("yyyy", flags.yyyy);
+			else if (format.includes("yy")) format = format.replace("yy", flags.yy);
+			if (format.includes("mmmm")) format = format.replace("mmmm", flags.mmmm);
+			else if (format.includes("mmm")) format = format.replace("mmm", flags.mmm);
+			else if (format.includes("mm")) format = format.replace("mm", flags.mm);
+			else if (format.includes("m")) format = format.replace("m", flags.m);
+			if (format.includes("dddd")) format = format.replace("dddd", flags.dddd);
+			else if (format.includes("ddd")) format = format.replace("ddd", flags.ddd);
+			if (format.includes("dd")) format = format.replace("dd", flags.dd);
+			else if (format.includes("d")) format = format.replace("d", flags.d);
+			return format;
+		}
 	},
 };
 
