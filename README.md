@@ -56,6 +56,13 @@ const text = random.text({ type: "word" });
 console.log(text); // "inwitada"
 ```
 
+### Date
+
+```javascript
+const date = random.date({ dateStart: [2021, 1, 1], dateEnd: [2021, 6, 17] });
+console.log(date); // "2021-04-29"
+```
+
 See the [full docs](https://pengrape.herokuapp.com/docs) for details and examples.
 
 ## Issues
