@@ -405,7 +405,7 @@ const random = {
 		dateStart[2];
 		dateEnd[1]--;
 		dateEnd[2]++;
-		result = new Date(new Date(...dateStart).getTime() + Math.random() * (new Date(...dateEnd).getTime() - new Date(...dateStart).getTime()));
+		const result = new Date(new Date(...dateStart).getTime() + Math.random() * (new Date(...dateEnd).getTime() - new Date(...dateStart).getTime()));
 
 		//Define flags
 		const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
