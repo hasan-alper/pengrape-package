@@ -7,6 +7,7 @@ const random = {
 		const typeDefault = "integer"; // ["integer", "decimal"]
 		const parityDefault = "none"; // ["none", "odd", "even"]
 		const precisionDefault = 4;
+		const constructDefault = 0;
 
 		//Add selected default values.
 		let {
@@ -15,12 +16,14 @@ const random = {
 			type = typeDefault,
 			parity = parityDefault,
 			precision = precisionDefault,
+			construct = constructDefault,
 		} = opts || {
 			min: minDefault,
 			max: maxDefault,
 			type: typeDefault,
 			parity: parityDefault,
 			precision: precisionDefault,
+			construct: constructDefault,
 		};
 
 		//Check the values to make sure they do not break the code.
@@ -31,114 +34,128 @@ const random = {
 		else if (!["none", "odd", "even"].includes(parity)) return 'Invalid parity value. Parity value must be "none", "odd" or "even".';
 		else if (!Number.isInteger(precision)) return "Invalid precision value. Precision value must be an integer.";
 		else if (precision <= 0) return "Invalid precision value. Precision value must be greater than 0.";
+		else if (!Number.isInteger(construct)) return "Invalid construct value. Construction value must be an integer.";
+		else if (construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
 
 		//Return a number based on the options.
-		if (type === "integer") {
-			let num = Math.floor(Math.random() * (max - min + 1)) + min;
-			if (parity === "none") return num;
-			else if (parity === "odd") return num % 2 === 0 ? random.number({ min, max, type, parity: "odd" }) : num;
-			else if (parity === "even") return num % 2 === 0 ? num : random.number({ min, max, type, parity: "even" });
-		} else if (type === "decimal") {
-			let num = `${Math.floor(Math.random() * (max - min)) + min}.`;
-			for (let i = 0; i < precision; i++) {
-				num += Math.floor(Math.random() * 10).toString();
+		let results = [];
+		for (let i = 0; construct ? i < +construct : i < 1; i++) {
+			if (type === "integer") {
+				let num = Math.floor(Math.random() * (max - min + 1)) + min;
+				if (parity === "none") results.push(num);
+				else if (parity === "odd") num % 2 === 0 ? random.number({ min, max, type, parity: "odd" }) : results.push(num);
+				else if (parity === "even") num % 2 === 0 ? results.push(num) : random.number({ min, max, type, parity: "even" });
+			} else if (type === "decimal") {
+				let num = `${Math.floor(Math.random() * (max - min)) + min}.`;
+				for (let i = 0; i < precision; i++) {
+					num += Math.floor(Math.random() * 10).toString();
+				}
+				results.push(num);
 			}
-			return num;
 		}
+		return +construct === 0 ? results[0] : results;
 	},
 	color: (opts) => {
 		//Define default values for options.
 		const formatDefault = "hex"; // ["hex", "rgb", "hsl"]
 		const valuesDefault = [null, null, null, null];
 		const syntaxDefault = "normal"; // ["normal", "list", "all"]
+		const constructDefault = 0;
 
 		//Add selected default values.
 		let { format = formatDefault } = opts || { format: formatDefault };
 		let { values = valuesDefault } = opts || { values: valuesDefault };
 		let { syntax = syntaxDefault } = opts || { syntax: syntaxDefault };
+		let { construct = constructDefault } = opts || { construct: constructDefault };
 
 		//Check the values to make sure they do not break the code.
 		if (!["hex", "rgb", "hsl", "all"].includes(format)) return 'Invalid format value. Format value must be "hex", "rgb", "hsl" or "all".';
 		if (!["normal", "list", "all"].includes(syntax)) return 'Invalid syntax value. Syntax value must be "normal", "list" or "all".';
+		if (!Number.isInteger(construct)) return "Invalid construct value. Construction value must be an integer.";
+		if (construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
 
 		// Generate codes based on the format value.
 		const charList = "0123456789abcdef";
-		if (format === "rgb") {
-			const r = values[0] || random.number({ min: 0, max: 255 });
-			const g = values[1] || random.number({ min: 0, max: 255 });
-			const b = values[2] || random.number({ min: 0, max: 255 });
-			if (syntax === "normal") return pretty.rgb([r, g, b]);
-			else if (syntax === "list") return [r, g, b];
-			else if (syntax === "all") return { normal: pretty.rgb([r, g, b]), list: [r, g, b] };
-		} else if (format === "hex") {
-			const r = values[0] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
-			const g = values[1] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
-			const b = values[2] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
-			if (syntax === "normal") return pretty.hex([r, g, b]);
-			else if (syntax === "list") return [r, g, b];
-			else if (syntax === "all") return { normal: pretty.hex([r, g, b]), list: [r, g, b] };
-		} else if (format === "hsl") {
-			const h = values[0] || random.number({ min: 0, max: 359 });
-			const s = values[1] || random.number({ min: 0, max: 100 });
-			const l = values[2] || random.number({ min: 0, max: 100 });
-			if (syntax === "normal") return pretty.hsl([h, s, l]);
-			else if (syntax === "list") return [h, s, l];
-			else if (syntax === "all") return { normal: pretty.hsl([h, s, l]), list: [h, s, l] };
-		} else if (format === "all") {
-			if (values && values[0] === "rgb") {
-				const r = values[1] || random.number({ min: 0, max: 255 });
-				const g = values[2] || random.number({ min: 0, max: 255 });
-				const b = values[3] || random.number({ min: 0, max: 255 });
-				const rgb = [r, g, b];
-				const hex = convert.rgbToHex(rgb);
-				const hsl = convert.rgbToHsl(rgb);
-				const prgb = pretty.rgb(rgb);
-				const phex = pretty.hex(hex);
-				const phsl = pretty.hsl(hsl);
-				if (syntax === "normal") return [phex, prgb, phsl];
-				else if (syntax === "list") return [hex, rgb, hsl];
-				else if (syntax === "all") return { normal: [phex, prgb, phsl], list: [hex, rgb, hsl] };
-			} else if (values && values[0] === "hex") {
-				const r = values[1] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
-				const g = values[2] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
-				const b = values[3] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
-				const hex = [r, g, b];
-				const rgb = convert.hexToRgb(hex);
-				const hsl = convert.hexToHsl(hex);
-				const phex = pretty.hex(hex);
-				const prgb = pretty.rgb(rgb);
-				const phsl = pretty.hsl(hsl);
-				if (syntax === "normal") return [phex, prgb, phsl];
-				else if (syntax === "list") return [hex, rgb, hsl];
-				else if (syntax === "all") return { normal: [phex, prgb, phsl], list: [hex, rgb, hsl] };
-			} else if (values && values[0] === "hsl") {
-				const h = values[1] || random.number({ min: 0, max: 359 });
-				const s = values[2] || random.number({ min: 0, max: 100 });
-				const l = values[3] || random.number({ min: 0, max: 100 });
-				const hsl = [h, s, l];
-				const rgb = convert.hslToRgb(hsl);
-				const hex = convert.hslToHex(hsl);
-				const phsl = pretty.hsl(hsl);
-				const prgb = pretty.rgb(rgb);
-				const phex = pretty.hex(hex);
-				if (syntax === "normal") return [phex, prgb, phsl];
-				else if (syntax === "list") return [hex, rgb, hsl];
-				else if (syntax === "all") return { normal: [phex, prgb, phsl], list: [hex, rgb, hsl] };
-			} else {
-				const r = random.number({ min: 0, max: 255 });
-				const g = random.number({ min: 0, max: 255 });
-				const b = random.number({ min: 0, max: 255 });
-				const rgb = [r, g, b];
-				const hex = convert.rgbToHex(rgb);
-				const hsl = convert.rgbToHsl(rgb);
-				const prgb = pretty.rgb(rgb);
-				const phex = pretty.hex(hex);
-				const phsl = pretty.hsl(hsl);
-				if (syntax === "normal") return [phex, prgb, phsl];
-				else if (syntax === "list") return [hex, rgb, hsl];
-				else if (syntax === "all") return { normal: [phex, prgb, phsl], list: [hex, rgb, hsl] };
+		let results = [];
+		for (let i = 0; construct ? i < +construct : i < 1; i++) {
+			if (format === "rgb") {
+				const r = values[0] || random.number({ min: 0, max: 255 });
+				const g = values[1] || random.number({ min: 0, max: 255 });
+				const b = values[2] || random.number({ min: 0, max: 255 });
+				if (syntax === "normal") results.push(pretty.rgb([r, g, b]));
+				else if (syntax === "list") results.push([r, g, b]);
+				else if (syntax === "all") results.push({ normal: pretty.rgb([r, g, b]), list: [r, g, b] });
+			} else if (format === "hex") {
+				const r = values[0] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+				const g = values[1] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+				const b = values[2] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+				if (syntax === "normal") results.push(pretty.hex([r, g, b]));
+				else if (syntax === "list") results.push([r, g, b]);
+				else if (syntax === "all") results.push({ normal: pretty.hex([r, g, b]), list: [r, g, b] });
+			} else if (format === "hsl") {
+				const h = values[0] || random.number({ min: 0, max: 359 });
+				const s = values[1] || random.number({ min: 0, max: 100 });
+				const l = values[2] || random.number({ min: 0, max: 100 });
+				if (syntax === "normal") results.push(pretty.hsl([h, s, l]));
+				else if (syntax === "list") results.push([h, s, l]);
+				else if (syntax === "all") results.push({ normal: pretty.hsl([h, s, l]), list: [h, s, l] });
+			} else if (format === "all") {
+				if (values && values[0] === "rgb") {
+					const r = values[1] || random.number({ min: 0, max: 255 });
+					const g = values[2] || random.number({ min: 0, max: 255 });
+					const b = values[3] || random.number({ min: 0, max: 255 });
+					const rgb = [r, g, b];
+					const hex = convert.rgbToHex(rgb);
+					const hsl = convert.rgbToHsl(rgb);
+					const prgb = pretty.rgb(rgb);
+					const phex = pretty.hex(hex);
+					const phsl = pretty.hsl(hsl);
+					if (syntax === "normal") results.push([phex, prgb, phsl]);
+					else if (syntax === "list") results.push([hex, rgb, hsl]);
+					else if (syntax === "all") results.push({ normal: [phex, prgb, phsl], list: [hex, rgb, hsl] });
+				} else if (values && values[0] === "hex") {
+					const r = values[1] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+					const g = values[2] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+					const b = values[3] || charList[random.number({ min: 0, max: 15 })] + charList[random.number({ min: 0, max: 15 })];
+					const hex = [r, g, b];
+					const rgb = convert.hexToRgb(hex);
+					const hsl = convert.hexToHsl(hex);
+					const phex = pretty.hex(hex);
+					const prgb = pretty.rgb(rgb);
+					const phsl = pretty.hsl(hsl);
+					if (syntax === "normal") results.push([phex, prgb, phsl]);
+					else if (syntax === "list") results.push([hex, rgb, hsl]);
+					else if (syntax === "all") results.push({ normal: [phex, prgb, phsl], list: [hex, rgb, hsl] });
+				} else if (values && values[0] === "hsl") {
+					const h = values[1] || random.number({ min: 0, max: 359 });
+					const s = values[2] || random.number({ min: 0, max: 100 });
+					const l = values[3] || random.number({ min: 0, max: 100 });
+					const hsl = [h, s, l];
+					const rgb = convert.hslToRgb(hsl);
+					const hex = convert.hslToHex(hsl);
+					const phsl = pretty.hsl(hsl);
+					const prgb = pretty.rgb(rgb);
+					const phex = pretty.hex(hex);
+					if (syntax === "normal") results.push([phex, prgb, phsl]);
+					else if (syntax === "list") results.push([hex, rgb, hsl]);
+					else if (syntax === "all") results.push({ normal: [phex, prgb, phsl], list: [hex, rgb, hsl] });
+				} else {
+					const r = random.number({ min: 0, max: 255 });
+					const g = random.number({ min: 0, max: 255 });
+					const b = random.number({ min: 0, max: 255 });
+					const rgb = [r, g, b];
+					const hex = convert.rgbToHex(rgb);
+					const hsl = convert.rgbToHsl(rgb);
+					const prgb = pretty.rgb(rgb);
+					const phex = pretty.hex(hex);
+					const phsl = pretty.hsl(hsl);
+					if (syntax === "normal") results.push([phex, prgb, phsl]);
+					else if (syntax === "list") results.push([hex, rgb, hsl]);
+					else if (syntax === "all") results.push({ normal: [phex, prgb, phsl], list: [hex, rgb, hsl] });
+				}
 			}
 		}
+		return +construct === 0 ? results[0] : results;
 	},
 	password: (opts) => {
 		//Define default values for options.
@@ -150,6 +167,7 @@ const random = {
 		const maxLengthDefault = 24;
 		const symbolPoolDefault = "~!@#$%&*-+=?";
 		const excludeSimilarDefault = false;
+		const constructDefault = 0;
 
 		//Add selected default values.
 		let {
@@ -162,6 +180,7 @@ const random = {
 			length = random.number({ min: minLength, max: maxLength }),
 			symbolPool = symbolPoolDefault,
 			excludeSimilar = excludeSimilarDefault,
+			construct = constructDefault,
 		} = opts || {
 			lowercase: lowercaseDefault,
 			uppercase: uppercaseDefault,
@@ -171,6 +190,7 @@ const random = {
 			maxLength: maxLengthDefault,
 			length: random.number({ min: minLengthDefault, max: maxLengthDefault }),
 			excludeSimilar: excludeSimilarDefault,
+			construct: constructDefault,
 		};
 
 		//Check the values to make sure they do not break the code.
@@ -187,6 +207,8 @@ const random = {
 		else if (!Number.isInteger(length)) return "Invalid length value. Length value must be an integer.";
 		else if (length <= 0) return "Invalid length value. Length value must be greater than 0.";
 		else if (!lowercase && !uppercase && !number && !symbol) return "Invalid character set. At least one character set must be selected.";
+		else if (!Number.isInteger(construct)) return "Invalid construct value. Construction value must be an integer.";
+		else if (construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
 
 		//Define characters
 		let lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
@@ -206,24 +228,33 @@ const random = {
 		if (symbol) allCharacters += symbolPool;
 
 		//Return a password based on the options.
-		let password = "";
+		let results = [];
+		for (let i = 0; construct ? i < +construct : i < 1; i++) {
+			let password = "";
+			for (let i = 0; i < length; i++) {
+				let charIndex;
+				if (allCharacters.length === 1) charIndex = 0;
+				else charIndex = random.number({ min: 0, max: allCharacters.length - 1 });
 
-		for (let i = 0; i < length; i++) {
-			let charIndex;
-			if (allCharacters.length === 1) charIndex = 0;
-			else charIndex = random.number({ min: 0, max: allCharacters.length - 1 });
-
-			password += allCharacters[charIndex];
+				password += allCharacters[charIndex];
+			}
+			results.push(password);
 		}
-		return password;
+		return +construct === 0 ? results[0] : results;
 	},
 	spinner: (opts) => {
 		//Define default values for options.
 		const returnDetailsDefault = false;
 		const returnEntriesDefault = false;
+		const constructDefault = 0;
 
 		//Add selected default values.
-		let { entries, returnDetails = returnDetailsDefault, returnEntries = returnEntriesDefault } = opts || { returnDetails: returnDetailsDefault, returnEntries: returnEntriesDefault };
+		let {
+			entries,
+			returnDetails = returnDetailsDefault,
+			returnEntries = returnEntriesDefault,
+			construct = constructDefault,
+		} = opts || { returnDetails: returnDetailsDefault, returnEntries: returnEntriesDefault, construct: constructDefault };
 
 		//Check the values to make sure they do not break the code.
 		if (!entries) return "Invalid entries value. Entries value must contain at least one entry.";
@@ -231,43 +262,46 @@ const random = {
 		else if (!entries[0]) return "Invalid entries value. Entries value must contain at least one entry.";
 		else if (typeof returnDetails !== "boolean") return "Invalid returnDetails value. returnDetails value must be true or false.";
 		else if (typeof returnEntries !== "boolean") return "Invalid returnEntries value. returnEntries value must be true or false.";
-
-		//Generate a degree.
-		const deg = random.number({ min: 0, max: 359 });
+		else if (!Number.isInteger(construct)) return "Invalid construct value. Construction value must be an integer.";
+		else if (construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
 
 		//Create entry objects and return a winner.
-		let winner;
-		let detailedWinner;
-		let allEntries = [];
-		let allDetailedEntries = [];
-		entries.forEach((entry, i) => {
-			const max = Math.floor((360 / entries.length) * (i + 1));
-			const min = Math.floor(max - 360 / entries.length);
-			const data = max - min;
-			let isWinner = false;
-			const obj = { entry, min, max, deg, data, isWinner };
-			if (obj.min < deg && max > deg) {
-				winner = entry;
-				detailedWinner = obj;
-				obj.isWinner = true;
-			}
-			allEntries = entries;
-			allDetailedEntries.push(obj);
-		});
-
-		[winner, detailedWinner, allEntries, allDetailedEntries];
-		if (!returnEntries && !returnDetails) return winner;
-		else if (!returnEntries && returnDetails) return detailedWinner;
-		else if (returnEntries && !returnDetails) return allEntries;
-		else if (returnEntries && returnDetails) return allDetailedEntries;
+		let results = [];
+		for (let i = 0; construct ? i < +construct : i < 1; i++) {
+			const deg = random.number({ min: 0, max: 359 });
+			let winner;
+			let detailedWinner;
+			let allEntries = [];
+			let allDetailedEntries = [];
+			entries.forEach((entry, i) => {
+				const max = Math.floor((360 / entries.length) * (i + 1));
+				const min = Math.floor(max - 360 / entries.length);
+				const data = max - min;
+				let isWinner = false;
+				const obj = { entry, min, max, deg, data, isWinner };
+				if (obj.min <= deg && max > deg) {
+					winner = entry;
+					detailedWinner = obj;
+					obj.isWinner = true;
+				}
+				allEntries = entries;
+				allDetailedEntries.push(obj);
+			});
+			if (!returnEntries && !returnDetails) results.push(winner);
+			else if (!returnEntries && returnDetails) results.push(detailedWinner);
+			else if (returnEntries && !returnDetails) results.push(allEntries);
+			else if (returnEntries && returnDetails) results.push(allDetailedEntries);
+		}
+		return +construct === 0 ? results[0] : results;
 	},
 	dice: (opts) => {
 		//Define default values for options.
 		const amountsDefault = 1;
 		const sidesDefault = 4;
+		const constructDefault = 0;
 
 		//Add selected default values.
-		let { notation = `${amountsDefault}d${sidesDefault}` } = opts || { notation: `${amountsDefault}d${sidesDefault}` };
+		let { notation = `${amountsDefault}d${sidesDefault}`, construct = constructDefault } = opts || { notation: `${amountsDefault}d${sidesDefault}`, construct: constructDefault };
 		const splits = notation.split("d");
 		const amounts = parseInt(splits[0] || amountsDefault);
 		const sides = parseInt(splits[1] || sidesDefault);
@@ -276,40 +310,52 @@ const random = {
 		if (!Number.isInteger(amounts) || !Number.isInteger(sides)) return 'Invalid notation value. Notation value should look like these: "2d10", "d6", "12d" , "8" or "d"';
 		else if (amounts <= 0) return "Invalid amounts value. Amounts value must be greater than 0.";
 		else if (sides <= 1) return "Invalid sides value. Sides value must be greater than 1.";
+		else if (!Number.isInteger(construct)) return "Invalid construct value. Construction value must be an integer.";
+		else if (construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
 
 		//Generate results based on options.
-		let total = 0;
 		let results = [];
-		let allData = {};
-		for (let i = 0; i < amounts; i++) {
-			const result = random.number({ min: 1, max: sides });
-			total += result;
-			results.push(result);
+		for (let i = 0; construct ? i < +construct : i < 1; i++) {
+			let total = 0;
+			let output = [];
+			let allData = {};
+			for (let i = 0; i < amounts; i++) {
+				const result = random.number({ min: 1, max: sides });
+				total += result;
+				output.push(result);
+			}
+			allData = { output, total };
+			results.push(allData);
 		}
-		allData = { results, total };
-
-		return allData;
+		return +construct === 0 ? results[0] : results;
 	},
 	text: (opts) => {
 		//Define default values for options.
 		const typeDefault = "sentence"; //["letter", "syllable", "word", "sentence", "paragraph"]
 		const maxLengthDefault = 12; //This value should be less than 60 to prevent max call stack size exceeding.
+		const constructDefault = 0;
 
 		//Add selected default values.
-		let { type = typeDefault, length } = opts || { type: typeDefault };
+		let { type = typeDefault, length, construct = constructDefault } = opts || { type: typeDefault, construct: constructDefault };
 
 		//Check the values to make sure they do not break the code.
 		if (!["letter", "syllable", "word", "sentence", "paragraph"].includes(type)) return 'Invalid type value. Type value must be "letter", "syllable", "word", "sentence" or "paragraph".';
 		else if (!Number.isInteger(length) && length && type !== "letter" && type !== "syllable") return "Invalid length value. Length value must be an integer.";
 		else if (length <= 1 && type !== "letter" && type !== "syllable") return "Invalid length value. Length value must be greater than 1.";
 		else if (length > maxLengthDefault && type !== "letter" && type !== "syllable") return `Invalid length value. Length value must be smaller than or equal to ${maxLengthDefault}.`;
+		else if (!Number.isInteger(construct)) return "Invalid construct value. Construction value must be an integer.";
+		else if (construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
 
 		//Return a text based on the options.
-		if (type === "letter") return getLetter();
-		else if (type === "syllable") return getSyllable();
-		else if (type === "word") return getWord(length);
-		else if (type === "sentence") return getSentence(length);
-		else if (type === "paragraph") return getParagraph(length);
+		let results = [];
+		for (let i = 0; construct ? i < +construct : i < 1; i++) {
+			if (type === "letter") results.push(getLetter());
+			else if (type === "syllable") results.push(getSyllable());
+			else if (type === "word") results.push(getWord(length));
+			else if (type === "sentence") results.push(getSentence(length));
+			else if (type === "paragraph") results.push(getParagraph(length));
+		}
+		return +construct === 0 ? results[0] : results;
 
 		//Define functions.
 		function getLetter() {
@@ -382,16 +428,19 @@ const random = {
 		const dateStartDefault = [2021, 1, 1];
 		const dateEndDefault = [2022, 1, 1];
 		const formatDefault = "yyyy-mm-dd";
+		const constructDefault = 0;
 
 		//Add selected default values.
 		let {
 			dateStart = dateStartDefault,
 			dateEnd = dateEndDefault,
 			format = formatDefault,
+			construct = constructDefault,
 		} = opts || {
 			dateStart: dateStartDefault,
 			dataEnd: dateEndDefault,
 			format: formatDefault,
+			construct: constructDefault,
 		};
 
 		//Check the values to make sure they do not break the code.
@@ -399,32 +448,36 @@ const random = {
 		else if (dateStart[0] > 3000 || dateEnd[0] > 3000) return "Invalid year. Year value must be smaller than or equal to 3000.";
 		else if (new Date(...dateStart).getTime() > new Date(...dateEnd).getTime()) return "Invalid date values. The start date must come before the end date.";
 		else if (typeof format !== "string") return "Invalid format value. Format value must a string.";
-
-		//Generate a date based on the options.
-		dateStart[1]--;
-		dateStart[2];
-		dateEnd[1]--;
-		dateEnd[2]++;
-		const result = new Date(new Date(...dateStart).getTime() + Math.random() * (new Date(...dateEnd).getTime() - new Date(...dateStart).getTime()));
-
-		//Define flags
-		const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-		const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-		const flags = {
-			yy: result.getFullYear().toString().slice(-2),
-			yyyy: result.getFullYear().toString(),
-			m: (result.getMonth() + 1).toString(),
-			mm: pad(result.getMonth() + 1),
-			mmm: months[result.getMonth()].slice(0, 3),
-			mmmm: months[result.getMonth()],
-			d: result.getDate().toString(),
-			dd: pad(result.getDate()),
-			ddd: days[result.getDay()].slice(0, 3),
-			dddd: days[result.getDay()],
-		};
+		else if (!Number.isInteger(construct)) return "Invalid construct value. Construction value must be an integer.";
+		else if (construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
 
 		//Return a date based on format
-		return formatDate(format);
+		let results = [];
+		for (let i = 0; construct ? i < +construct : i < 1; i++) {
+			dateStart[1]--;
+			dateStart[2];
+			dateEnd[1]--;
+			dateEnd[2]++;
+			const result = new Date(new Date(...dateStart).getTime() + Math.random() * (new Date(...dateEnd).getTime() - new Date(...dateStart).getTime()));
+
+			//Define flags
+			const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+			const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+			const flags = {
+				yy: result.getFullYear().toString().slice(-2),
+				yyyy: result.getFullYear().toString(),
+				m: (result.getMonth() + 1).toString(),
+				mm: pad(result.getMonth() + 1),
+				mmm: months[result.getMonth()].slice(0, 3),
+				mmmm: months[result.getMonth()],
+				d: result.getDate().toString(),
+				dd: pad(result.getDate()),
+				ddd: days[result.getDay()].slice(0, 3),
+				dddd: days[result.getDay()],
+			};
+			results.push(formatDate(format, flags));
+		}
+		return +construct === 0 ? results[0] : results;
 
 		//Define funtions
 		function pad(x) {
@@ -433,7 +486,7 @@ const random = {
 			return x;
 		}
 
-		function formatDate(format) {
+		function formatDate(format, flags) {
 			if (format.includes("yyyy")) format = format.replace("yyyy", flags.yyyy);
 			else if (format.includes("yy")) format = format.replace("yy", flags.yy);
 			if (format.includes("mmmm")) format = format.replace("mmmm", flags.mmmm);
