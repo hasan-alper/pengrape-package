@@ -1,7 +1,7 @@
 const random = require("./index");
 
 //Number
-number = random.number({ min: 10, max: 12, type: "decimal", precision: 6, construct: 0 });
+number = random.number({ min: 10, max: 20, type: "integer", parity: "even", construct: 10 });
 
 //Color
 color = random.color({ format: "all", values: ["rgb", 33, "234", null], syntax: "all", construct: 100 });
@@ -22,4 +22,4 @@ text = random.text({ type: "word", length: 8, construct: 40 });
 date = random.date({ dateStart: [1990, 6, 17], dateEnd: [2021, 6, 17], format: "dddd, dd mmm yyyy", construct: 60 });
 
 //Print
-console.log(date);
+console.log(number);

@@ -41,10 +41,9 @@ const random = {
 		let results = [];
 		for (let i = 0; construct ? i < +construct : i < 1; i++) {
 			if (type === "integer") {
-				let num = Math.floor(Math.random() * (max - min + 1)) + min;
-				if (parity === "none") results.push(num);
-				else if (parity === "odd") num % 2 === 0 ? random.number({ min, max, type, parity: "odd" }) : results.push(num);
-				else if (parity === "even") num % 2 === 0 ? results.push(num) : random.number({ min, max, type, parity: "even" });
+				if (parity === "none") generateANumber(min, max);
+				else if (parity === "odd") generateAnOdd(min, max);
+				else if (parity === "even") generateAnEven(min, max);
 			} else if (type === "decimal") {
 				let num = `${Math.floor(Math.random() * (max - min)) + min}.`;
 				for (let i = 0; i < precision; i++) {
@@ -54,6 +53,23 @@ const random = {
 			}
 		}
 		return +construct === 0 ? results[0] : results;
+
+		function generateANumber(min, max) {
+			let num = Math.floor(Math.random() * (max - min + 1)) + min;
+			results.push(num);
+		}
+
+		function generateAnOdd(min, max) {
+			let num = Math.floor(Math.random() * (max - min + 1)) + min;
+			if (num % 2 === 0) generateAnOdd(min, max);
+			else results.push(num);
+		}
+
+		function generateAnEven(min, max) {
+			let num = Math.floor(Math.random() * (max - min + 1)) + min;
+			if (num % 2 === 0) results.push(num);
+			else generateAnEven(min, max);
+		}
 	},
 	color: (opts) => {
 		//Define default values for options.
