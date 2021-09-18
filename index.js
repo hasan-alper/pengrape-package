@@ -177,13 +177,16 @@ const random = {
 		//Define default values for options.
 		const harmonyDefault = "analogous"; // ["analogous"]
 		const formatDefault = "hex"; // ["hex", "rgb", "hsl"]
+		const syntaxDefault = "normal"; // ["normal", "list", "all"]
 
 		//Add selected default values.
 		let { harmony = harmonyDefault } = opts || { harmony: harmonyDefault };
 		let { format = formatDefault } = opts || { format: formatDefault };
+		let { syntax = syntaxDefault } = opts || { syntax: syntaxDefault };
 
 		//Check the values to make sure they do not break the code.
 		if (!["hex", "rgb", "hsl", "all"].includes(format)) return 'Invalid format value. Format value must be "hex", "rgb", "hsl" or "all".';
+		if (!["normal", "list", "all"].includes(syntax)) return 'Invalid syntax value. Syntax value must be "normal", "list" or "all".';
 
 		//Generate a color.
 		const main_color = random.color({ format: "all", syntax: "all" });
@@ -208,23 +211,40 @@ const random = {
 				result.push([hue_values[i], sat_values[i], lig_values[i]]);
 			}
 
-			return generateResults(result, format);
+			return generateResults(result, format, syntax);
 		}
 
-		function generateResults(rst, fmt) {
-			let hexCodes = [];
-			let rgbCodes = [];
-			let hslCodes = [];
+		function generateResults(rst, fmt, syx) {
+			let hexCodesNormal = [];
+			let rgbCodesNormal = [];
+			let hslCodesNormal = [];
+			let hexCodesList = [];
+			let rgbCodesList = [];
+			let hslCodesList = [];
 			for (let i = 0; i < 5; i++) {
-				hexCodes.push(pretty.hex(convert.hslToHex(rst[i])));
-				rgbCodes.push(pretty.rgb(convert.hslToRgb(rst[i])));
-				hslCodes.push(pretty.hsl(rst[i]));
+				hexCodesNormal.push(pretty.hex(convert.hslToHex(rst[i])));
+				rgbCodesNormal.push(pretty.rgb(convert.hslToRgb(rst[i])));
+				hslCodesNormal.push(pretty.hsl(rst[i]));
+				hexCodesList.push(convert.hslToHex(rst[i]));
+				rgbCodesList.push(convert.hslToRgb(rst[i]));
+				hslCodesList.push(rst[i]);
 			}
-
-			if (fmt == "hex") return hexCodes;
-			else if (fmt == "rgb") return rgbCodes;
-			else if (fmt == "hsl") return hslCodes;
-			else if (fmt == "all") return [hexCodes, rgbCodes, hslCodes];
+			if (syx == "normal") {
+				if (fmt == "hex") return hexCodesNormal;
+				else if (fmt == "rgb") return rgbCodesNormal;
+				else if (fmt == "hsl") return hslCodesNormal;
+				else if (fmt == "all") return [hexCodesNormal, rgbCodesNormal, hslCodesNormal];
+			} else if (syx == "list") {
+				if (fmt == "hex") return hexCodesList;
+				else if (fmt == "rgb") return rgbCodesList;
+				else if (fmt == "hsl") return hslCodesList;
+				else if (fmt == "all") return [hexCodesList, rgbCodesList, hslCodesList];
+			} else if (syx == "all") {
+				if (fmt == "hex") return { normal: hexCodesNormal, list: hexCodesList };
+				else if (fmt == "rgb") return { normal: rgbCodesNormal, list: rgbCodesList };
+				else if (fmt == "hsl") return { normal: hslCodesNormal, list: hslCodesList };
+				else if (fmt == "all") return { normal: [hexCodesNormal, rgbCodesNormal, hslCodesNormal], list: [hexCodesList, rgbCodesList, hslCodesList] };
+			}
 		}
 	},
 	password: (opts) => {
