@@ -6,6 +6,9 @@ number = random.number({ min: 10, max: 20, type: "integer", parity: "even", cons
 //Color
 color = random.color({ format: "all", values: ["rgb", 33, "234", null], syntax: "all", construct: 100 });
 
+//Palette
+palette = random.palette({ harmony: "analogous" });
+
 //Password
 password = random.password({ excludeSimilar: true, construct: 20 });
 
@@ -22,4 +25,4 @@ text = random.text({ type: "word", length: 8, construct: 40 });
 date = random.date({ dateStart: [1990, 6, 17], dateEnd: [2021, 6, 17], format: "dddd, dd mmm yyyy", construct: 60 });
 
 //Print
-console.log(number);
+console.log(palette);

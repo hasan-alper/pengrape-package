@@ -1,6 +1,6 @@
 {
 	"name": "pengrape",
-	"version": "1.2.1",
+	"version": "1.2.2",
 	"description": "A collection of utilities generating anything random.",
 	"main": "index.js",
 	"repository": {
@@ -11,6 +11,7 @@
 		"random",
 		"number",
 		"color",
+		"palette",
 		"password",
 		"spinner",
 		"dice",

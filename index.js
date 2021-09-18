@@ -173,6 +173,41 @@ const random = {
 		}
 		return +construct === 0 ? results[0] : results;
 	},
+	palette: (opts) => {
+		//Define default values for options.
+		const harmonyDefault = "analogous"; // ["analogous"]
+
+		//Add selected default values.
+		let { harmony = harmonyDefault } = opts || { harmony: harmonyDefault };
+
+		//Check the values to make sure they do not break the code.
+
+		//Generate a color.
+		const main_color = random.color({ format: "all", syntax: "all" });
+
+		//Return a password based on the harmony value.
+		if (harmony == "analogous") return analogous();
+
+		//Define functions.
+		function analogous() {
+			let main_hue = +main_color.list[2][0];
+			let main_sat = +main_color.list[2][1];
+			let main_lig = +main_color.list[2][2];
+
+			if (main_sat > 95) main_sat -= 5;
+
+			const hue_values = [(main_hue + 30 + 360) % 360, (main_hue + 15 + 360) % 360, main_hue, (main_hue - 15 + 360) % 360, (main_hue - 30 + 360) % 360];
+			const sat_values = [main_sat + 5, main_sat + 5, main_sat, main_sat + 5, main_sat + 5];
+			const lig_values = [50, 48, 52, 48, 50];
+
+			let result = [];
+			for (let i = 0; i < 5; i++) {
+				result.push(pretty.hex(convert.hslToHex([hue_values[i], sat_values[i], lig_values[i]])));
+			}
+
+			return result;
+		}
+	},
 	password: (opts) => {
 		//Define default values for options.
 		const lowercaseDefault = true;
