@@ -176,11 +176,14 @@ const random = {
 	palette: (opts) => {
 		//Define default values for options.
 		const harmonyDefault = "analogous"; // ["analogous"]
+		const formatDefault = "hex"; // ["hex", "rgb", "hsl"]
 
 		//Add selected default values.
 		let { harmony = harmonyDefault } = opts || { harmony: harmonyDefault };
+		let { format = formatDefault } = opts || { format: formatDefault };
 
 		//Check the values to make sure they do not break the code.
+		if (!["hex", "rgb", "hsl", "all"].includes(format)) return 'Invalid format value. Format value must be "hex", "rgb", "hsl" or "all".';
 
 		//Generate a color.
 		const main_color = random.color({ format: "all", syntax: "all" });
@@ -202,10 +205,26 @@ const random = {
 
 			let result = [];
 			for (let i = 0; i < 5; i++) {
-				result.push(pretty.hex(convert.hslToHex([hue_values[i], sat_values[i], lig_values[i]])));
+				result.push([hue_values[i], sat_values[i], lig_values[i]]);
 			}
 
-			return result;
+			return generateResults(result, format);
+		}
+
+		function generateResults(rst, fmt) {
+			let hexCodes = [];
+			let rgbCodes = [];
+			let hslCodes = [];
+			for (let i = 0; i < 5; i++) {
+				hexCodes.push(pretty.hex(convert.hslToHex(rst[i])));
+				rgbCodes.push(pretty.rgb(convert.hslToRgb(rst[i])));
+				hslCodes.push(pretty.hsl(rst[i]));
+			}
+
+			if (fmt == "hex") return hexCodes;
+			else if (fmt == "rgb") return rgbCodes;
+			else if (fmt == "hsl") return hslCodes;
+			else if (fmt == "all") return [hexCodes, rgbCodes, hslCodes];
 		}
 	},
 	password: (opts) => {
