@@ -7,7 +7,7 @@ number = random.number({ min: 10, max: 20, type: "integer", parity: "even", cons
 color = random.color({ format: "all", values: ["rgb", 33, "234", null], syntax: "all", construct: 100 });
 
 //Palette
-palette = random.palette({ harmony: "analogous", format: "all", syntax: "all" });
+palette = random.palette({ harmony: "analogous", format: "hsl", syntax: "normal", construct: 5 });
 
 //Password
 password = random.password({ excludeSimilar: true, construct: 20 });

@@ -178,24 +178,30 @@ const random = {
 		const harmonyDefault = "analogous"; // ["analogous"]
 		const formatDefault = "hex"; // ["hex", "rgb", "hsl"]
 		const syntaxDefault = "normal"; // ["normal", "list", "all"]
+		const constructDefault = 0;
 
 		//Add selected default values.
 		let { harmony = harmonyDefault } = opts || { harmony: harmonyDefault };
 		let { format = formatDefault } = opts || { format: formatDefault };
 		let { syntax = syntaxDefault } = opts || { syntax: syntaxDefault };
+		let { construct = constructDefault } = opts || { construct: constructDefault };
 
 		//Check the values to make sure they do not break the code.
 		if (!["hex", "rgb", "hsl", "all"].includes(format)) return 'Invalid format value. Format value must be "hex", "rgb", "hsl" or "all".';
 		if (!["normal", "list", "all"].includes(syntax)) return 'Invalid syntax value. Syntax value must be "normal", "list" or "all".';
-
-		//Generate a color.
-		const main_color = random.color({ format: "all", syntax: "all" });
+		if (!Number.isInteger(construct)) return "Invalid construct value. Construction value must be an integer.";
+		if (construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
 
 		//Return a password based on the harmony value.
-		if (harmony == "analogous") return analogous();
+		let results = [];
+		for (let i = 0; construct ? i < +construct : i < 1; i++) {
+			if (harmony == "analogous") results.push(analogous());
+		}
+		return +construct === 0 ? results[0] : results;
 
 		//Define functions.
 		function analogous() {
+			const main_color = random.color({ format: "all", syntax: "all" });
 			let main_hue = +main_color.list[2][0];
 			let main_sat = +main_color.list[2][1];
 			let main_lig = +main_color.list[2][2];
