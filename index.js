@@ -175,7 +175,7 @@ const random = {
 	},
 	palette: (opts) => {
 		//Define default values for options.
-		const harmonyDefault = "analogous"; // ["analogous"]
+		const harmonyDefault = "analogous"; // ["analogous", "monochromatic", "triad", "complementary", "shades"]
 		const formatDefault = "hex"; // ["hex", "rgb", "hsl"]
 		const syntaxDefault = "normal"; // ["normal", "list", "all"]
 		const constructDefault = 0;
@@ -187,6 +187,7 @@ const random = {
 		let { construct = constructDefault } = opts || { construct: constructDefault };
 
 		//Check the values to make sure they do not break the code.
+		if (!["analogous", "monochromatic", "triad", "complementary", "shades"].includes(harmony)) return 'Invalid harmony value. Format value must be "analogous", "monochromatic", "triad", "complementary" or "shades".';
 		if (!["hex", "rgb", "hsl", "all"].includes(format)) return 'Invalid format value. Format value must be "hex", "rgb", "hsl" or "all".';
 		if (!["normal", "list", "all"].includes(syntax)) return 'Invalid syntax value. Syntax value must be "normal", "list" or "all".';
 		if (!Number.isInteger(construct)) return "Invalid construct value. Construction value must be an integer.";
@@ -195,22 +196,85 @@ const random = {
 		//Return a password based on the harmony value.
 		let results = [];
 		for (let i = 0; construct ? i < +construct : i < 1; i++) {
-			if (harmony == "analogous") results.push(analogous());
-		}
-		return +construct === 0 ? results[0] : results;
-
-		//Define functions.
-		function analogous() {
 			const main_color = random.color({ format: "all", syntax: "all" });
 			let main_hue = +main_color.list[2][0];
 			let main_sat = +main_color.list[2][1];
 			let main_lig = +main_color.list[2][2];
+			const params = [main_hue, main_sat, main_lig];
+			if (harmony == "analogous") results.push(analogous(...params));
+			else if (harmony == "monochromatic") results.push(monochromatic(...params));
+			else if (harmony == "triad") results.push(triad(...params));
+			else if (harmony == "complementary") results.push(complementary(...params));
+			else if (harmony == "shades") results.push(shades(...params));
+		}
+		return +construct === 0 ? results[0] : results;
 
-			if (main_sat > 95) main_sat -= 5;
+		//Define functions.
+		function analogous(h, s, l) {
+			if (s > 95) s -= 5;
 
-			const hue_values = [(main_hue + 30 + 360) % 360, (main_hue + 15 + 360) % 360, main_hue, (main_hue - 15 + 360) % 360, (main_hue - 30 + 360) % 360];
-			const sat_values = [main_sat + 5, main_sat + 5, main_sat, main_sat + 5, main_sat + 5];
+			const hue_values = [(h + 30 + 360) % 360, (h + 15 + 360) % 360, h, (h - 15 + 360) % 360, (h - 30 + 360) % 360];
+			const sat_values = [s + 5, s + 5, s, s + 5, s + 5];
 			const lig_values = [50, 48, 52, 48, 50];
+
+			let result = [];
+			for (let i = 0; i < 5; i++) {
+				result.push([hue_values[i], sat_values[i], lig_values[i]]);
+			}
+
+			return generateResults(result, format, syntax);
+		}
+
+		function monochromatic(h, s, l) {
+			const hue_values = [h, h, h, h, h];
+			let sat_values = [];
+			if (s > 40) sat_values = [s, s - 30, s, s - 30, s];
+			else sat_values = [s, s + 30, s, s + 30, s];
+			const lig_values = [22, 49, 47, 22, 38];
+
+			let result = [];
+			for (let i = 0; i < 5; i++) {
+				result.push([hue_values[i], sat_values[i], lig_values[i]]);
+			}
+
+			return generateResults(result, format, syntax);
+		}
+
+		function triad(h, s, l) {
+			if (s > 90) s -= 5;
+
+			const hue_values = [h, (h + 120 + 360) % 360, h, (h - 120 + 360) % 360, (h - 120 + 360) % 360];
+			const sat_values = [s + 10, s + 10, s, s + 10, s + 5];
+			const lig_values = [32, 46, 46, 46, 32];
+
+			let result = [];
+			for (let i = 0; i < 5; i++) {
+				result.push([hue_values[i], sat_values[i], lig_values[i]]);
+			}
+
+			return generateResults(result, format, syntax);
+		}
+
+		function complementary(h, s, l) {
+			if (s > 90) s -= 10;
+			else if (s < 10) s += 30;
+
+			const hue_values = [h, h, h, (h + 180 + 360) % 360, (h + 180 + 360) % 360];
+			const sat_values = [s + 10, s - 10, s, s + 10, s];
+			const lig_values = [35, 50, 50, 35, 50];
+
+			let result = [];
+			for (let i = 0; i < 5; i++) {
+				result.push([hue_values[i], sat_values[i], lig_values[i]]);
+			}
+
+			return generateResults(result, format, syntax);
+		}
+
+		function shades(h, s, l) {
+			const hue_values = [h, h, h, h, h];
+			const sat_values = [s, s, s, s, s];
+			const lig_values = [34, 22, 47, 50, 42];
 
 			let result = [];
 			for (let i = 0; i < 5; i++) {
