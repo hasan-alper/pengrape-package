@@ -28,6 +28,13 @@ const color = random.color({ format: "hex" });
 console.log(color); // "#f28e51"
 ```
 
+### Palette
+
+```javascript
+const palette = random.palette({ harmony: "analogous" });
+console.log(palette); // [ "#cb13ec", "#8f12e2", "#6723e7", "#2712e2", "#1334ec" ]
+```
+
 ### Password
 
 ```javascript

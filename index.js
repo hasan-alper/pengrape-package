@@ -241,7 +241,7 @@ const random = {
 		}
 
 		function triad(h, s, l) {
-			if (s > 90) s -= 5;
+			if (s > 90) s -= 10;
 
 			const hue_values = [h, (h + 120 + 360) % 360, h, (h - 120 + 360) % 360, (h - 120 + 360) % 360];
 			const sat_values = [s + 10, s + 10, s, s + 10, s + 5];
@@ -655,7 +655,7 @@ const random = {
 			else if (format.includes("m")) format = format.replace("m", flags.m);
 			if (format.includes("dddd")) format = format.replace("dddd", flags.dddd);
 			else if (format.includes("ddd")) format = format.replace("ddd", flags.ddd);
-			if (format.includes("dd")) format = format.replace("dd", flags.dd);
+			else if (format.includes("dd")) format = format.replace("dd", flags.dd);
 			else if (format.includes("d")) format = format.replace("d", flags.d);
 			return format;
 		}
