@@ -181,10 +181,10 @@ module.exports.shades = (h, s, l, format, syntax) => {
 };
 
 module.exports.validate = (opts) => {
-	if (!["analogous", "monochromatic", "triad", "complementary", "shades"].includes(opts.harmony)) return 'Invalid harmony value. Format value must be "analogous", "monochromatic", "triad", "complementary" or "shades".';
-	if (!["hex", "rgb", "hsl", "all"].includes(opts.format)) return 'Invalid format value. Format value must be "hex", "rgb", "hsl" or "all".';
-	if (!["normal", "list", "all"].includes(opts.syntax)) return 'Invalid syntax value. Syntax value must be "normal", "list" or "all".';
-	if (!Number.isInteger(opts.construct)) return "Invalid construct value. Construction value must be an integer.";
-	if (opts.construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
+	if (!["analogous", "monochromatic", "triad", "complementary", "shades"].includes(opts.harmony)) throw RangeError('Invalid format. The value must be an "analogous", "monochromatic", "triad", "complementary" or "shades".');
+	else if (!["hex", "rgb", "hsl", "all"].includes(opts.format)) throw RangeError('Invalid format. The value must be a "hex", "rgb", “hsl” or "all".');
+	else if (!["normal", "list", "all"].includes(opts.syntax)) throw RangeError('Invalid syntax. The value must be a "normal", "list" or "all".');
+	else if (!Number.isInteger(opts.construct)) throw TypeError("Invalid construct, expected an integer.");
+	else if (opts.construct < 0) throw RangeError("Invalid construct. The value cannot be less than zero.");
 	else return 0;
 };

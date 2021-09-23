@@ -19,11 +19,11 @@ module.exports.pad = (x) => {
 };
 
 module.exports.validate = (opts) => {
-	if (opts.dateStart[0] < 1000 || opts.dateEnd[0] < 1000) return "Invalid year. Year value must be greater than or equal to 1000.";
-	else if (opts.dateStart[0] > 3000 || opts.dateEnd[0] > 3000) return "Invalid year. Year value must be smaller than or equal to 3000.";
-	else if (new Date(...opts.dateStart).getTime() > new Date(...opts.dateEnd).getTime()) return "Invalid date values. The start date must come before the end date.";
-	else if (typeof opts.format !== "string") return "Invalid format value. Format value must a string.";
-	else if (!Number.isInteger(opts.construct)) return "Invalid construct value. Construction value must be an integer.";
-	else if (opts.construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
+	if (opts.dateStart[0] < 1000 || opts.dateEnd[0] < 1000) throw RangeError("Invalid year. The value cannot be less than 1000.");
+	else if (opts.dateStart[0] > 3000 || opts.dateEnd[0] > 3000) throw RangeError("Invalid year. The value cannot be more than 3000.");
+	else if (new Date(...opts.dateStart).getTime() > new Date(...opts.dateEnd).getTime()) throw RangeError("Invalid date. Start date must come before end date.");
+	else if (typeof opts.format !== "string") throw TypeError("Invalid format, expected a string.");
+	else if (!Number.isInteger(opts.construct)) throw TypeError("Invalid construct, expected an integer.");
+	else if (opts.construct < 0) throw RangeError("Invalid construct. The value cannot be less than zero.");
 	else return 0;
 };

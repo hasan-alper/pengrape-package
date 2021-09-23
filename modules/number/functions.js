@@ -16,14 +16,14 @@ module.exports.getEven = (min, max) => {
 };
 
 module.exports.validate = (opts) => {
-	if (!Number.isInteger(opts.min)) return "Invalid min value. Min value must be an integer.";
-	else if (!Number.isInteger(opts.max)) return "Invalid max value. Max value must be an integer.";
-	else if (opts.min >= opts.max) return "Invalid min and max values. Min value must be smaller than max value.";
-	else if (!["integer", "decimal"].includes(opts.type)) return 'Invalid type value. Type value must be "integer" or "decimal".';
-	else if (!["none", "odd", "even"].includes(opts.parity)) return 'Invalid parity value. Parity value must be "none", "odd" or "even".';
-	else if (!Number.isInteger(opts.precision)) return "Invalid precision value. Precision value must be an integer.";
-	else if (opts.precision <= 0) return "Invalid precision value. Precision value must be greater than 0.";
-	else if (!Number.isInteger(opts.construct)) return "Invalid construct value. Construction value must be an integer.";
-	else if (opts.construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
+	if (!Number.isInteger(opts.min)) throw TypeError("Invalid min, expected an integer.");
+	else if (!Number.isInteger(opts.max)) throw TypeError("Invalid max, expected an integer.");
+	else if (opts.min >= opts.max) throw RangeError("Invalid min and max. Min cannot be greater than max.");
+	else if (!["integer", "decimal"].includes(opts.type)) throw RangeError('Invalid type. The value must be an "integer" or "decimal".');
+	else if (!["none", "odd", "even"].includes(opts.parity)) throw RangeError('Invalid parity. The value must be a "none", "odd" or "even".');
+	else if (!Number.isInteger(opts.precision)) throw TypeError("Invalid precision, expected an integer.");
+	else if (opts.precision <= 0) throw RangeError("Invalid precision. The value cannot be less than one.");
+	else if (!Number.isInteger(opts.construct)) throw TypeError("Invalid construct, expected an integer.");
+	else if (opts.construct < 0) throw RangeError("Invalid construct. The value cannot be less than zero.");
 	else return 0;
 };

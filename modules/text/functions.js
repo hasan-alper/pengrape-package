@@ -66,12 +66,12 @@ const getParagraph = (length) => {
 };
 
 const validate = (opts) => {
-	if (!["letter", "syllable", "word", "sentence", "paragraph"].includes(opts.type)) return 'Invalid type value. Type value must be "letter", "syllable", "word", "sentence" or "paragraph".';
-	else if (!Number.isInteger(opts.length) && opts.length && opts.type !== "letter" && opts.type !== "syllable") return "Invalid length value. Length value must be an integer.";
-	else if (opts.length <= 1 && opts.type !== "letter" && opts.type !== "syllable") return "Invalid length value. Length value must be greater than 1.";
-	else if (opts.length > 12 && opts.type !== "letter" && opts.type !== "syllable") return `Invalid length value. Length value must be smaller than or equal to 12.`;
-	else if (!Number.isInteger(opts.construct)) return "Invalid construct value. Construction value must be an integer.";
-	else if (opts.construct < 0) return "Invalid construct value. Construct value must be greater than or equal to 0.";
+	if (!["letter", "syllable", "word", "sentence", "paragraph"].includes(opts.type)) throw RangeError('Invalid format. The value must be a "letter", "syllable", "word", "sentence" or "paragraph".');
+	else if (!Number.isInteger(opts.length) && opts.length && opts.type !== "letter" && opts.type !== "syllable") throw TypeError("Invalid length, expected an integer.");
+	else if (opts.length <= 1 && opts.type !== "letter" && opts.type !== "syllable") throw RangeError("Invalid length. The value cannot be less than two.");
+	else if (opts.length > 12 && opts.type !== "letter" && opts.type !== "syllable") throw RangeError("Invalid length. The value cannot be more than twelve.");
+	else if (!Number.isInteger(opts.construct)) throw TypeError("Invalid construct, expected an integer.");
+	else if (opts.construct < 0) throw RangeError("Invalid construct. The value cannot be less than zero.");
 	else return 0;
 };
 
