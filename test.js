@@ -1,28 +1,19 @@
 const random = require("./index");
 
-//Number
-number = random.number({ min: 10, max: 20, type: "integer", parity: "even", construct: 10 });
+const number = random.number({ min: -1, max: 1, type: "decimal", parity: "even", precision: 3, construct: 20 });
 
-//Color
-color = random.color({ format: "all", values: ["rgb", 33, "234", null], syntax: "all", construct: 100 });
+const color = random.color({ format: "rgb", syntax: "list", values: [null, 220, null], construct: 4 });
 
-//Palette
-palette = random.palette({ harmony: "shades", format: "all", syntax: "normal", construct: 0 });
+const palette = random.palette({ harmony: "triad", format: "all", syntax: "all", construct: 3 });
 
-//Password
-password = random.password({ excludeSimilar: true, construct: 20 });
+const password = random.password({ minLength: 4, maxLength: 6, symbol: false, uppercase: false, symbolPool: ":)", construct: 10 });
 
-//Spinner
-spinner = random.spinner({ entries: ["pizza", "lasagna", "salad", "quesadilla"], returnDetails: false, returnEntries: false, construct: 200 });
+const spinner = random.spinner({ entries: ["pizza", "lasagna", "salad", "quesadilla"], returnDetails: true, returnEntries: true, construct: 4 });
 
-//Dice
-dice = random.dice({ notation: "20d100", construct: 10 });
+const dice = random.dice({ notation: "10d30", construct: 10 });
 
-//Random Text
-text = random.text({ type: "word", length: 8, construct: 40 });
+const text = random.text({ type: "word", construct: 4 });
 
-//Random Date
-date = random.date({ dateStart: [1990, 6, 17], dateEnd: [2021, 6, 17], format: "dddd, dd mmm yyyy", construct: 60 });
+const date = random.date({ dateStart: [1993, 6, 17], dateEnd: [1993, 6, 18], format: "dd/mm/yyyy", construct: 2 });
 
-//Print
-console.log(palette);
+console.log(date);
