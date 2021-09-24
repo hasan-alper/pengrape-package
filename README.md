@@ -2,6 +2,10 @@
 
 A collection of utilities generating anything random.
 
+## Overview
+
+Pengrape provides 8 different utilities which include generating random number, color, palette, password, spinner, dice, text and date. Their behavior can be customized by providing different arguments.
+
 ## Installation
 
 ```bash
@@ -14,39 +18,29 @@ $ npm install pengrape
 const random = require("pengrape");
 ```
 
-### Number
+### Generate a result
+
+You can use the available methods to generate a random result according to your preferences.
 
 ```javascript
-const number = random.number({ min: 0, max: 20 });
-console.log(number); // 12
+random.number({ min: 10, max: 20 }); // 17
 ```
+
+### Construct results
+
+To generate multiple results, you can use the construct option in any methods you want.
+
+```javascript
+random.number({ min: 10, max: 20, construct: 4 }); // [12, 14, 10, 19]
+```
+
+## Examples
 
 ### Color
 
 ```javascript
 const color = random.color({ format: "hex" });
 console.log(color); // "#f28e51"
-```
-
-### Palette
-
-```javascript
-const palette = random.palette({ harmony: "analogous" });
-console.log(palette); // [ "#cb13ec", "#8f12e2", "#6723e7", "#2712e2", "#1334ec" ]
-```
-
-### Password
-
-```javascript
-const password = random.password({ symbol: false });
-console.log(password); // "W7q0Va5RY53L63o7U0it"
-```
-
-### Spinner
-
-```javascript
-const spinner = random.spinner({ entries: ["Pizza", "Lasagna", "Quesadilla"] });
-console.log(spinner); // "Lasagna"
 ```
 
 ### Dice
@@ -56,19 +50,14 @@ const dice = random.dice({ notation: "2d10" });
 console.log(dice); // { results: [ 4, 9 ], total: 13 }
 ```
 
-### Text
-
-```javascript
-const text = random.text({ type: "word" });
-console.log(text); // "inwitada"
-```
-
 ### Date
 
 ```javascript
 const date = random.date({ dateStart: [2021, 1, 1], dateEnd: [2021, 6, 17] });
 console.log(date); // "2021-04-29"
 ```
+
+## Full docs
 
 See the [full docs](https://pengrape.herokuapp.com/docs) for details and examples.
 
