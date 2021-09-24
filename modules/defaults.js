@@ -50,8 +50,8 @@ module.exports.text = {
 };
 
 module.exports.date = {
-	dateStart: [2021, 1, 1],
-	dateEnd: [2022, 1, 1],
+	dateStart: [new Date().getFullYear(), new Date().getMonth() + 1, new Date().getDate()], // today
+	dateEnd: [new Date().getFullYear() + 1, 1, 1], // end of this year
 	format: "yyyy-mm-dd",
 	construct: 0,
 };
